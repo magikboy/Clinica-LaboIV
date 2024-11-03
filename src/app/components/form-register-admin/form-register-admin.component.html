@@ -1,0 +1,163 @@
+<form [formGroup]="form" (ngSubmit)="sendForm()">
+  <div
+    class="flex flex-column align-items-center justify-content-center gap-4 py-5"
+    style="padding-bottom: 0 !important"
+  >
+    <div class="flex flex-wrap justify-content-center align-items-center">
+      <p-floatLabel>
+        <input class="w-15rem" type="text" pInputText formControlName="email" />
+        <label class="w-6rem" for="email">Email</label>
+      </p-floatLabel>
+      <div class="error">
+        @if(email?.dirty && email?.hasError('required')) { Debe ingresar un
+        email } @else if (email?.dirty && email?.hasError('email')) { Formato
+        invalido de email } @else if (email?.dirty &&
+        email?.hasError('emailTaken')) { El email ya esta en uso }
+      </div>
+    </div>
+    <div
+      class="flex flex-wrap justify-content-center align-items-center w-15rem"
+    >
+      <p-floatLabel [style]="{ width: '100%' }">
+        <p-password
+          inputStyleClass="w-full"
+          [maxLength]="'100%'"
+          formControlName="password"
+          [toggleMask]="true"
+          [feedback]="true"
+        />
+        <label class="w-6rem" for="password">Contraseña</label>
+      </p-floatLabel>
+      <div class="error">
+        @if(password?.dirty && password?.hasError('required')) { Debe ingresar
+        una Contraseña } @else if (password?.dirty &&
+        password?.hasError('minlength') || password?.hasError('maxlength')) { La
+        contraseña debe tener entre 6 y 18 caracteres }
+      </div>
+    </div>
+    <div
+      class="flex flex-wrap justify-content-center align-items-center w-15rem"
+    >
+      <p-floatLabel [style]="{ width: '100%' }">
+        <p-password
+          inputStyleClass="w-full"
+          [maxLength]="'100%'"
+          formControlName="rePassword"
+          [toggleMask]="true"
+          [feedback]="false"
+        />
+        <label class="w-6rem" for="password">Contraseña</label>
+      </p-floatLabel>
+      <div class="error">
+        @if(rePassword?.dirty && rePassword?.hasError('required')) { Debe
+        repetir la Contraseña } @else if (rePassword?.dirty &&
+        rePassword?.hasError('noMatch')) { La contraseña no coincide }
+      </div>
+    </div>
+    <div class="flex flex-wrap justify-content-center align-items-center">
+      <p-floatLabel>
+        <input
+          class="w-15rem"
+          type="text"
+          pInputText
+          formControlName="nombre"
+        />
+        <label class="w-6rem" for="name">Nombre</label>
+      </p-floatLabel>
+      <div class="error">
+        @if(nombre?.dirty && nombre?.hasError('required')) { Debe ingresar un
+        nombre } @else if (nombre?.dirty && nombre?.hasError('pattern')) { El
+        nombre solo debe contener letras }
+      </div>
+    </div>
+    <div class="flex flex-wrap justify-content-center align-items-center">
+      <p-floatLabel>
+        <input
+          class="w-15rem"
+          type="text"
+          pInputText
+          formControlName="apellido"
+        />
+        <label class="w-6rem" for="apellido">Apellido</label>
+      </p-floatLabel>
+      <div class="error">
+        @if(apellido?.dirty && apellido?.hasError('required')) { Debe ingresar
+        un apellido } @else if (apellido?.dirty &&
+        apellido?.hasError('pattern')) { El apellido solo debe contener letras }
+      </div>
+    </div>
+    <div class="flex flex-wrap justify-content-center align-items-center">
+      <p-floatLabel>
+        <input class="w-15rem" type="text" pInputText formControlName="dni" />
+        <label class="w-6rem" for="dni">DNI</label>
+      </p-floatLabel>
+      <div class="error">
+        @if(dni?.dirty && dni?.hasError('required')) { Debe ingresar un DNI }
+        @else if (dni?.dirty && dni?.hasError('pattern')) { El DNI solo debe
+        contener numeros } @else if (dni?.dirty && dni?.hasError('minlength') ||
+        dni?.hasError('maxlength')) { El DNI debe contener exactamente 8 digitos
+        } @else if (dni?.dirty && dni?.hasError('dniTaken')) { El DNI ya esta en
+        uso }
+      </div>
+    </div>
+    <div
+      class="w-7 lg:w-5 flex flex-wrap justify-content-center align-items-center"
+    >
+      <p-inputNumber
+        inputStyleClass="w-full text-center"
+        formControlName="edad"
+        [showButtons]="true"
+        buttonLayout="horizontal"
+        spinnerMode="horizontal"
+        inputId="horizontal"
+        decrementButtonClass="p-button-secondary"
+        incrementButtonClass="p-button-secondary"
+        incrementButtonIcon="pi pi-plus"
+        decrementButtonIcon="pi pi-minus"
+        [allowEmpty]="false"
+        [min]="1"
+        [max]="120"
+      />
+    </div>
+
+    <div
+      class="w-7 lg:w-5 flex flex-row justify-content-center align-items-center gap-2"
+    >
+      <div
+        [class.errorInput]="
+          imagenPerfil?.dirty && imagenPerfil?.hasError('required')
+        "
+        class="w-5"
+        (click)="clickFileInput('file-input-1')"
+        class="image-upload"
+      >
+        <input
+          formControlName="imagenPerfil"
+          (change)="selectProfilePicture($event)"
+          type="file"
+          id="file-input-1"
+          accept=".jpg, .jpeg, .png"
+        />
+        <label for="file-input">
+          <span>+</span>
+        </label>
+        <img
+          id="preview-file-input-1"
+          src="/assets/user/defaultUser.png"
+          alt="Image preview"
+        />
+      </div>
+    </div>
+    <div class="error">
+      @if(imagenPerfil?.dirty && imagenPerfil?.hasError('required')) { Debe
+      ingresar una Imagen de perfil }
+    </div>
+    <p-button
+      [disabled]="!form.valid"
+      type="submit"
+      label="Registrar"
+      icon="pi pi-user-plus"
+      styleClass="w-10rem mx-auto"
+    />
+  </div>
+</form>

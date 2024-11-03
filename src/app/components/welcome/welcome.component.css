@@ -1,0 +1,30 @@
+.welcome-container {
+  text-align: center;
+}
+
+.welcome-container h1 {
+  font-size: 2.5em;
+  margin-bottom: 20px;
+}
+
+.welcome-container p {
+  font-size: 1.2em;
+  margin-bottom: 30px;
+}
+
+.button-group {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+}
+
+.custom-black-button {
+  background-color: black !important;
+  color: white !important;
+  border: none !important;
+}
+
+.welcome-container h1,
+.welcome-container p {
+  color: white;
+}

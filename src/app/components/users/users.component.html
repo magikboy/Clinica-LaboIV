@@ -1,0 +1,80 @@
+<div class="h-screen w-full flex justify-content-center align-items-center" style="background: linear-gradient(to bottom, grey, black);">
+    <div class="w-12 px-6 py-6 border-round-right-lg shadow-7"
+         style="width: 80%; max-width: 910px; background-color: #000; border: 2px solid rgba(255, 255, 255, 0.2); border-radius: 15px; padding: 2rem; color: white;">
+        <div class="flex align-items-center justify-content-center">
+            <p-tabMenu [activeItem]="action" [model]="itemsAction" (activeItemChange)="onActionChange($event)"  />
+        </div>
+        <div class="flex align-items-center justify-content-center my-2 primary-300">
+            <p-tabMenu [activeItem]="role" [model]="itemsRole" (activeItemChange)="onRoleChange($event)"  />
+        </div>
+        <div class="flex justify-content-center">
+            @if(action.label == "Crear") {
+                <div class="w-5">
+                    @if(role.label == 'paciente')
+                    {
+                        <app-form-register-paciente (onRegister)="onRegister($event)"></app-form-register-paciente>
+                    }
+                    @else if (role.label == 'especialista') {
+                        <app-form-register-especialista (onRegister)="onRegister($event)"></app-form-register-especialista>
+                    }
+                    @else {
+                        <app-form-register-admin (onRegister)="onRegister($event)"></app-form-register-admin>
+                    }
+                </div>
+            }
+            @else {
+                <div class="w-full">
+                    <p-table [tableStyle]="{ 'overflow': 'auto' }" [styleClass]="'small'" [value]="users" [tableStyle]="{ 'min-width': '50rem' }">
+                        <ng-template pTemplate="header">
+                            <tr>
+                                <th>Foto</th>
+                                <th>Nombre</th>
+                                <th>DNI</th>
+                                <th>Edad</th>
+                                <th>Email</th>
+                                @if(role.label == 'especialista') {
+                                    <th>Especialidades</th>
+                                    <th>Habilitar</th>
+                                }
+                                @if(role.label == 'paciente') {
+                                    <th>Obra Social</th>
+                                    <th>Foto 2</th>
+                                }
+                            </tr>
+                        </ng-template>
+                        <ng-template pTemplate="body" let-user>
+                            <tr>
+                                <!-- Move profile image to the right -->
+                                <td style="text-align: right; padding-right: 10px;">
+                                    <img [src]="user.imagenPerfil" alt="foto-perfil" style="aspect-ratio: 4/4; width: 40px;">
+                                </td>
+                                <td>{{user.nombre}}</td>
+                                <td>{{user.dni}}</td>
+                                <td>{{user.edad}}</td>
+                                <td>{{user.email}}</td>
+                                @if(user.role == 'especialista') {
+                                    <td>{{user.especialidades}}</td>
+                                    <td>
+                                        @if (user.estaHabilitado) {
+                                            <p-button styleClass="w-full" (onClick)="deshabilitar(user)" label="Deshabilitar" icon="pi pi-arrow-down" iconPos="right" severity="danger" />
+                                        }
+                                        @else {
+                                            <p-button styleClass="w-full" (onClick)="habilitar(user)" label="Habilitar" icon="pi pi-check" iconPos="right" severity="success" />
+                                        }
+                                    </td>
+                                }
+                                @if(user.role == 'paciente') {
+                                    <td>{{user.obraSocial}}</td>
+                                    <td style="text-align: right; padding-right: 10px;">
+                                        <img [src]="user.imagenPerfilAux" alt="foto-perfil-aux" style="aspect-ratio: 4/4; width: 40px;">
+                                    </td>
+                                }
+                            </tr>
+                        </ng-template>
+                    </p-table>
+                </div>
+            }
+        </div>
+        
+    </div>
+</div>

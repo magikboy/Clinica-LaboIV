@@ -1,0 +1,76 @@
+<div class="h-screen w-full flex justify-content-center align-items-center" style="background: linear-gradient(to bottom, grey, black);">
+    <div class="card-container">
+        @if(estaViendoHorarios)
+        {
+            <div class="table-container">
+                <h2 class="text-center">Horarios</h2>
+                <p-table [tableStyle]="{'overflow': 'auto'}" [styleClass]="'small'" [value]="horariosDiaSemana" [tableStyle]="{'min-width': '50rem'}">
+                    <ng-template pTemplate="header">
+                        <tr>
+                            <th>Horas</th>
+                            @for (dia of diaSemana; track $index) {
+                                <th>{{dia}}</th>
+                            }
+                        </tr>
+                    </ng-template>
+                    <ng-template pTemplate="body" let-horario>
+                        <tr>
+                            <td>{{horario}}</td>
+                            @for (dia of diaSemana; track $index) {
+                                @if(dia != 'sabado')
+                                {
+                                    <td>
+                                        <p-checkbox [(ngModel)]="mapHorarios[dia][horario]" [binary]="true"></p-checkbox>
+                                    </td>
+                                }
+                                @else
+                                {
+                                    @if(HorariosfinDeSemana.includes(horario))
+                                    {
+                                        <td>
+                                            <p-checkbox [(ngModel)]="mapHorarios[dia][horario]" [binary]="true"></p-checkbox>
+                                        </td>
+                                    }
+                                    @else
+                                    {
+                                        <td>-</td>
+                                    }
+                                }
+                            }
+                        </tr>
+                    </ng-template>
+                </p-table>
+                <div class="button-group">
+                    <p-button (onClick)="volver()" icon="pi pi-arrow-left" label="Volver"></p-button>
+                    <p-button (onClick)="clear()" icon="pi pi-eraser" label="Limpiar"></p-button>
+                    <p-button (onClick)="guardar()" icon="pi pi-save" label="Guardar"></p-button>
+                </div>
+            </div>
+        }
+        @else
+        {
+            <div class="text-center">
+                <img class="profile-img pointer" (click)="changeImage()" [src]="getImagen()" alt="imagen perfil">
+            </div>
+            <div class="profile-info">
+                <h2>{{user.nombre + ' ' + user.apellido}}</h2>
+                <hr>
+                <div><span class="label">Rol:</span> <span class="value">{{user.role}}</span></div>
+                <div><span class="label">Edad:</span> <span class="value">{{user.edad}}</span></div>
+                <div><span class="label">Email:</span> <span class="value">{{user.email}}</span></div>
+                <div><span class="label">DNI:</span> <span class="value">{{user.dni}}</span></div>
+                
+                @if(user.role == 'paciente') {
+                    <div><span class="label">Obra Social:</span> <span class="value">{{user['obraSocial']}}</span></div>
+                }
+                
+                @if(user.role == 'especialista') {
+                    <div><span class="label">Especialidades:</span> <span class="value">{{user['especialidades']}}</span></div>
+                    <div class="actions">
+                        <p-button (onClick)="verHorarios()" icon="pi pi-clock" label="Mis Horarios"></p-button>
+                    </div>
+                }
+            </div>
+        }
+    </div>
+</div>

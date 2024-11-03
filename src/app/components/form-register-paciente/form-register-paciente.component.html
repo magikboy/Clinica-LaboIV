@@ -1,0 +1,192 @@
+<form [formGroup]="form" (ngSubmit)="sendForm()">
+  <div
+    class="flex flex-column align-items-center justify-content-center gap-4 py-5"
+  >
+    <!-- Email and Password Fields -->
+    <div class="grid w-full">
+      <div class="col-12 md:col-6">
+        <p-floatLabel>
+          <input
+            class="w-full"
+            type="text"
+            pInputText
+            formControlName="email"
+          />
+          <label for="email">Email</label>
+        </p-floatLabel>
+        <div
+          class="error"
+          *ngIf="
+            email?.dirty &&
+            (email?.hasError('required') ||
+              email?.hasError('email') ||
+              email?.hasError('emailTaken'))
+          "
+        >
+          <ng-container *ngIf="email?.hasError('required')"
+            >Debe ingresar un email</ng-container
+          >
+          <ng-container *ngIf="email?.hasError('email')"
+            >Formato invalido de email</ng-container
+          >
+          <ng-container *ngIf="email?.hasError('emailTaken')"
+            >El email ya está en uso</ng-container
+          >
+        </div>
+      </div>
+      <div class="col-12 md:col-6">
+        <p-floatLabel>
+          <p-password
+            inputStyleClass="w-full"
+            formControlName="password"
+            [toggleMask]="true"
+            [feedback]="true"
+          />
+          <label for="password">Contraseña</label>
+        </p-floatLabel>
+        <div
+          class="error"
+          *ngIf="
+            password?.dirty &&
+            (password?.hasError('required') ||
+              password?.hasError('minlength') ||
+              password?.hasError('maxlength'))
+          "
+        >
+          <ng-container *ngIf="password?.hasError('required')"
+            >Debe ingresar una Contraseña</ng-container
+          >
+          <ng-container
+            *ngIf="
+              password?.hasError('minlength') || password?.hasError('maxlength')
+            "
+            >La contraseña debe tener entre 6 y 18 caracteres</ng-container
+          >
+        </div>
+      </div>
+    </div>
+
+    <!-- Nombre and Apellido Fields -->
+    <div class="grid w-full">
+      <div class="col-12 md:col-6">
+        <p-floatLabel>
+          <input
+            class="w-full"
+            type="text"
+            pInputText
+            formControlName="nombre"
+          />
+          <label for="name">Nombre</label>
+        </p-floatLabel>
+        <div
+          class="error"
+          *ngIf="nombre?.dirty && nombre?.hasError('required')"
+        >
+          Debe ingresar un nombre
+        </div>
+      </div>
+      <div class="col-12 md:col-6">
+        <p-floatLabel>
+          <input
+            class="w-full"
+            type="text"
+            pInputText
+            formControlName="apellido"
+          />
+          <label for="apellido">Apellido</label>
+        </p-floatLabel>
+        <div
+          class="error"
+          *ngIf="apellido?.dirty && apellido?.hasError('required')"
+        >
+          Debe ingresar un apellido
+        </div>
+      </div>
+    </div>
+
+    <!-- DNI and Edad Fields -->
+    <div class="grid w-full">
+      <div class="col-12 md:col-6">
+        <p-floatLabel>
+          <input class="w-full" type="text" pInputText formControlName="dni" />
+          <label for="dni">DNI</label>
+        </p-floatLabel>
+        <div class="error" *ngIf="dni?.dirty && dni?.hasError('required')">
+          Debe ingresar un DNI
+        </div>
+      </div>
+      <div class="col-12 md:col-6">
+        <p-inputNumber
+          inputStyleClass="w-full text-center"
+          formControlName="edad"
+          [showButtons]="true"
+          buttonLayout="horizontal"
+          spinnerMode="horizontal"
+          [allowEmpty]="false"
+          [min]="1"
+          [max]="120"
+        >
+        </p-inputNumber>
+      </div>
+    </div>
+
+    <!-- Obra Social and Image Upload Fields -->
+    <div class="grid w-full">
+      <div class="col-12 md:col-6">
+        <p-floatLabel>
+          <input
+            class="w-full"
+            type="text"
+            pInputText
+            formControlName="obraSocial"
+          />
+          <label for="obraSocial">Obra Social</label>
+        </p-floatLabel>
+        <div
+          class="error"
+          *ngIf="obraSocial?.dirty && obraSocial?.hasError('required')"
+        >
+          Debe ingresar una Obra Social
+        </div>
+      </div>
+      <div class="col-12 md:col-6">
+        <div
+          [class.errorInput]="
+            imagenPerfil?.dirty && imagenPerfil?.hasError('required')
+          "
+          (click)="clickFileInput('file-input-1')"
+          class="image-upload"
+        >
+          <input
+            formControlName="imagenPerfil"
+            (change)="selectProfilePicture($event)"
+            type="file"
+            id="file-input-1"
+            accept=".jpg, .jpeg, .png"
+          />
+          <label for="file-input"><span>+</span></label>
+          <img
+            id="preview-file-input-1"
+            src="/assets/user/defaultUser.png"
+            alt="Image preview"
+          />
+        </div>
+        <div
+          class="error"
+          *ngIf="imagenPerfil?.dirty && imagenPerfil?.hasError('required')"
+        >
+          Debe ingresar una Imagen de perfil
+        </div>
+      </div>
+    </div>
+
+    <!-- Submit Button -->
+    <p-button
+      [disabled]="!form.valid"
+      type="submit"
+      label="Registrar"
+      icon="pi pi-user-plus"
+      styleClass="w-10rem mx-auto"
+    />
+  </div>
+</form>

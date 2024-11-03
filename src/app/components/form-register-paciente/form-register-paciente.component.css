@@ -1,0 +1,57 @@
+.error {
+    color: rgb(172, 0, 0);
+}
+
+.image-upload {
+    position: relative;
+    width: 50%;
+    aspect-ratio: 4/4;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+}
+
+.image-upload.errorInput {
+    border-width: 2px;
+    border-color: #fca5a5;
+}
+  
+.image-upload input[type="file"] {
+display: none;
+}
+  
+.image-upload label {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 48px;
+    color: #ccc;
+}
+  
+.image-upload img {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    /* height: 100%; */
+    object-fit: contain;
+    display: none;
+    aspect-ratio: 4 / 4;
+}
+
+.image-upload input[type="file"]:valid + label {
+    display: none;
+}
+
+.image-upload input[type="file"]:valid + label + img {
+    display: block;
+}

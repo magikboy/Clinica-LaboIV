@@ -1,0 +1,32 @@
+@if(state == "loading") {
+    <main>
+        <svg class="sp" viewBox="0 0 128 128" width="128px" height="128px" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+                <mask id="mask1">
+                    <rect x="0" y="0" width="128" height="128" fill="url(#grad1)" />
+                </mask>
+            </defs>
+            <g fill="none" stroke-linecap="round" stroke-width="16">
+                <circle class="sp__ring" r="56" cx="64" cy="64" />
+                <g stroke="var(--primary-color)">
+                    <path class="sp__worm1" d="M120,64c0,30.928-25.072,56-56,56S8,94.928,8,64" stroke-dasharray="43.98 307.87" />
+                    <g transform="translate(42,42)">
+                        <g class="sp__worm2" transform="translate(-42,0)">
+                            <path class="sp__worm2-1" d="M8,22c0-7.732,6.268-14,14-14s14,6.268,14,14" stroke-dasharray="43.98 175.92" />
+                        </g>
+                    </g>
+                </g>
+            </g>
+        </svg>
+    </main>
+}
+@else if (state == "check") {
+    <div class="animated-element">
+        <i class="bi bi-check-circle-fill" style="color: var(--primary-color);"></i>
+    </div>
+}
+@else {
+    <div class="animated-element">
+        <i class="bi bi-x-circle-fill" style="color: rgb(132, 0, 0);"></i>
+    </div>
+}
