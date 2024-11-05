@@ -70,6 +70,13 @@ export class LoginComponent {
     );    
   }
 
+  quickLogin(email: string, password: string) {
+    this.userData.email = email;
+    this.userData.password = password;
+    this.onLogin();
+  }
+  
+
   onRegisterClick() {
     this.router.navigateByUrl('register');
   }

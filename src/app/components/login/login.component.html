@@ -1,54 +1,115 @@
-<div class="h-screen w-full flex justify-content-center align-items-center" style="background: linear-gradient(to bottom, grey, black);">
-    <div class="card shadow-5" style="width: 30%; background-color: #000; border: 2px solid rgba(255, 255, 255, 0.2); border-radius: 15px; padding: 2rem; color: white;">
-        <!-- Login Title -->
-        <div class="text-center mb-4">
-            <h2 style="font-size: 2rem; color: #fff; font-weight: bold;">Login</h2>
-            <p style="color: #bbb;">Por favor, ingresa tus datos para acceder</p>
-        </div>
-        
-        <!-- Loader -->
-        <div *ngIf="loaderState.loading" class="flex justify-content-center align-items-center w-full py-5 px-5">
-            <app-loader [state]="loaderState.state"></app-loader>
-        </div>
-
-        <!-- Form Content -->
-        <div [class.hidden]="loaderState.loading" class="w-full flex flex-column align-items-center gap-4 py-3">
-            <!-- Error Message -->
-            <div *ngIf="errorMessage" class="p-message p-message-error w-full text-center" style="color: #ff4c4c;">
-                {{errorMessage}}
-            </div>
-
-            <!-- Email Input -->
-            <div class="flex justify-content-center align-items-center gap-2 w-full">
-                <p-floatLabel>
-                    <input type="text" pInputText [(ngModel)]="userData.email" placeholder="Email" class="w-full p-inputtext-lg" />
-                    <label for="email" style="color: #bbb;">Email</label>
-                </p-floatLabel>
-            </div>
-
-            <!-- Password Input -->
-            <div class="flex justify-content-center align-items-center gap-2 w-full">
-                <p-floatLabel>
-                    <p-password inputStyleClass="w-full p-inputtext-lg" [(ngModel)]="userData.password" [toggleMask]="true" [feedback]="false" placeholder="Password" />
-                    <label for="password" style="color: #bbb;">Password</label>
-                </p-floatLabel>
-            </div>
-
-            <!-- Forgot Password Link -->
-            <div class="flex justify-content-center align-items-center w-full mb-3">
-                <a href="#" style="color: #bbb; text-decoration: underline;">¿Olvidaste tu contraseña?</a>
-            </div>
-
-            <!-- Login Button -->
-            <p-button (onClick)="onLogin()" label="Ingresar" icon="pi pi-sign-in" styleClass="custom-white-button p-button-rounded w-full mt-2" />
-        </div>
-
-        <!-- Divider -->
-        <div class="text-center my-3" style="color: #bbb;">&mdash; No tienes cuenta creada? &mdash;</div>
-
-        <!-- Register Section -->
-        <div class="w-full flex align-items-center justify-content-center">
-            <p-button (onClick)="onRegisterClick()" label="Registrate" icon="pi pi-user-plus" styleClass="p-button-rounded custom-white-button w-full" />
-        </div>
+<div
+  class="h-screen w-full flex justify-content-center align-items-center"
+  style="background: linear-gradient(to bottom, grey, black)"
+>
+  <div
+    class="card shadow-5"
+    style="
+      width: 30%;
+      background-color: #000;
+      border: 2px solid rgba(255, 255, 255, 0.2);
+      border-radius: 15px;
+      padding: 2rem;
+      color: white;
+    "
+  >
+    <!-- Login Title -->
+    <div class="text-center mb-4">
+      <h2 style="font-size: 2rem; color: #fff; font-weight: bold">Login</h2>
+      <p style="color: #bbb">Por favor, ingresa tus datos para acceder</p>
     </div>
+
+    <!-- Loader -->
+    <div
+      *ngIf="loaderState.loading"
+      class="flex justify-content-center align-items-center w-full py-5 px-5"
+    >
+      <app-loader [state]="loaderState.state"></app-loader>
+    </div>
+
+    <!-- Form Content -->
+    <div
+      [class.hidden]="loaderState.loading"
+      class="w-full flex flex-column align-items-center gap-4 py-3"
+    >
+      <!-- Error Message -->
+      <div
+        *ngIf="errorMessage"
+        class="p-message p-message-error w-full text-center"
+        style="color: #ff4c4c"
+      >
+        {{ errorMessage }}
+      </div>
+
+      <!-- Email Input -->
+      <div class="flex justify-content-center align-items-center gap-2 w-full">
+        <p-floatLabel>
+          <input
+            type="text"
+            pInputText
+            [(ngModel)]="userData.email"
+            placeholder="Email"
+            class="w-full p-inputtext-lg"
+          />
+          <label for="email" style="color: #bbb">Email</label>
+        </p-floatLabel>
+      </div>
+
+      <!-- Password Input -->
+      <div class="flex justify-content-center align-items-center gap-2 w-full">
+        <p-floatLabel>
+          <p-password
+            inputStyleClass="w-full p-inputtext-lg"
+            [(ngModel)]="userData.password"
+            [toggleMask]="true"
+            [feedback]="false"
+            placeholder="Password"
+          />
+          <label for="password" style="color: #bbb">Password</label>
+        </p-floatLabel>
+      </div>
+
+      <!-- Forgot Password Link -->
+      <div class="flex justify-content-center align-items-center w-full mb-3">
+        <a href="#" style="color: #bbb; text-decoration: underline"
+          >¿Olvidaste tu contraseña?</a
+        >
+      </div>
+
+      <!-- Login Button -->
+      <p-button
+        (onClick)="onLogin()"
+        label="Ingresar"
+        icon="pi pi-sign-in"
+        styleClass="custom-white-button p-button-rounded w-full mt-2"
+      />
+
+      <!-- Quick Login Buttons -->
+      <div
+        class="flex justify-content-center align-items-center w-full my-3 gap-3"
+      >
+        <p-button
+          (onClick)="quickLogin('massi11@yopmail.com', 'massimo2611')"
+          label="Ingresar como Admin"
+          icon="pi pi-user"
+          styleClass="p-button-rounded w-full"
+        />
+      </div>
+    </div>
+
+    <!-- Divider -->
+    <div class="text-center my-3" style="color: #bbb">
+      &mdash; No tienes cuenta creada? &mdash;
+    </div>
+
+    <!-- Register Section -->
+    <div class="w-full flex align-items-center justify-content-center">
+      <p-button
+        (onClick)="onRegisterClick()"
+        label="Registrate"
+        icon="pi pi-user-plus"
+        styleClass="p-button-rounded custom-white-button w-full"
+      />
+    </div>
+  </div>
 </div>
