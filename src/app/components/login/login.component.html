@@ -1,86 +1,83 @@
 <div class="welcome-container">
-    <div class="overlay">
-      <div class="card card-gradient" @scaleUp>
-        <div class="card-content">
-          <!-- Formulario de login -->
-          <div style="flex: 1;">
-            <!-- Título del login -->
-            <h2 class="login-title">Login</h2>
-            <!-- Loader -->
-            <div
-              *ngIf="loaderState.loading"
-              class="flex justify-content-center align-content-center py-5 px-5"
-            >
-              <app-loader [state]="loaderState.state"></app-loader>
-            </div>
-  
-            <!-- Formulario de login -->
-            <div
-              [class.hidden]="loaderState.loading"
-              class="flex flex-column align-items-center justify-content-center gap-4 py-5"
-            >
-              <div class="flex justify-content-center error">
-                {{ errorMessage }}
-              </div>
-              <div
-                class="flex flex-wrap justify-content-center align-items-center gap-2"
-              >
-                <p-floatLabel>
-                  <input
-                    class="w-15rem"
-                    type="text"
-                    pInputText
-                    [(ngModel)]="userData.email"
-                  />
-                  <label class="w-6rem" for="email">Email</label>
-                </p-floatLabel>
-              </div>
-              <div
-                class="flex flex-wrap justify-content-center align-items-center w-15rem"
-              >
-                <p-floatLabel [style]="{ width: '100%' }">
-                  <p-password
-                    inputStyleClass="w-full"
-                    class="w-12rem"
-                    [(ngModel)]="userData.password"
-                    [toggleMask]="true"
-                    [feedback]="false"
-                  ></p-password>
-                  <label class="w-6rem" for="password">Password</label>
-                </p-floatLabel>
-              </div>
-              <p-button
-                (onClick)="onLogin()"
-                label="Ingresar"
-                icon="pi pi-user"
-                styleClass="login-button mx-auto"
-              ></p-button>
-            </div>
-  
-            <!-- Separador con texto personalizado -->
-            <div class="custom-divider">
-              ¿No tenés cuenta?
-              <a (click)="onRegisterClick()">Registrate</a>
-            </div>
+  <div class="overlay">
+    <div class="card card-gradient" @scaleUp>
+      <div class="card-content">
+        <!-- Formulario de login -->
+        <div style="flex: 1">
+          <!-- Título del login -->
+          <h2 class="login-title">Login</h2>
+          <!-- Loader -->
+          <div
+            *ngIf="loaderState.loading"
+            class="flex justify-content-center align-content-center py-5 px-5"
+          >
+            <app-loader [state]="loaderState.state"></app-loader>
           </div>
-  
-          <!-- Botones de acceso rápido de los usuarios -->
-          <div class="profile-buttons-container">
-            <div
-              *ngFor="let userCredential of userCredentials; let i = index"
-            >
-              <img
-                appBorderColorByRole
-                [role]="userCredential.role"
-                (click)="onLoadCredentials(userCredential)"
-                class="profile-button"
-                [src]="userCredential.picture"
-                alt="profile picture"
-              />
+
+          <!-- Formulario de login -->
+          <div
+            [class.hidden]="loaderState.loading"
+            class="flex flex-column align-items-center justify-content-center gap-4 py-5"
+          >
+            <div class="flex justify-content-center error">
+              {{ errorMessage }}
             </div>
+            <div
+              class="flex flex-wrap justify-content-center align-items-center gap-2"
+            >
+              <p-floatLabel>
+                <input
+                  class="w-15rem"
+                  type="text"
+                  pInputText
+                  [(ngModel)]="userData.email"
+                />
+                <label class="w-6rem" for="email">Email</label>
+              </p-floatLabel>
+            </div>
+            <div
+              class="flex flex-wrap justify-content-center align-items-center w-15rem"
+            >
+              <p-floatLabel [style]="{ width: '100%' }">
+                <p-password
+                  inputStyleClass="w-full"
+                  class="w-12rem"
+                  [(ngModel)]="userData.password"
+                  [toggleMask]="true"
+                  [feedback]="false"
+                ></p-password>
+                <label class="w-6rem" for="password">Password</label>
+              </p-floatLabel>
+            </div>
+            <p-button
+              (onClick)="onLogin()"
+              label="Ingresar"
+              icon="pi pi-user"
+              styleClass="login-button mx-auto"
+            ></p-button>
+          </div>
+
+          <!-- Separador con texto personalizado -->
+          <div class="custom-divider">
+            ¿No tenés cuenta?
+            <a (click)="onRegisterClick()">Registrate</a>
+          </div>
+        </div>
+
+        <!-- Botones de acceso rápido de los usuarios -->
+        <div class="profile-buttons-container">
+          <div *ngFor="let userCredential of userCredentials; let i = index">
+            <img
+              appBorderColorByRole
+              [role]="userCredential.role"
+              (click)="onLoadCredentials(userCredential)"
+              class="profile-button"
+              [src]="userCredential.picture"
+              alt="profile picture"
+            />
           </div>
         </div>
       </div>
     </div>
   </div>
-  
+</div>

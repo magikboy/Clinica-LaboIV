@@ -2,7 +2,7 @@ import { Component, inject } from '@angular/core';
 import { DividerModule } from 'primeng/divider';
 import { ButtonModule } from 'primeng/button';
 import { InputTextModule } from 'primeng/inputtext';
-import { FloatLabelModule } from "primeng/floatlabel"
+import { FloatLabelModule } from "primeng/floatlabel";
 import { FormsModule } from '@angular/forms';
 import { PasswordModule } from 'primeng/password';
 import { Router } from '@angular/router';
@@ -33,10 +33,10 @@ import { CommonModule } from '@angular/common';
   ]
 })
 export class LoginComponent {
-  errorMessage = ""
+  errorMessage = "";
   authService = inject(AuthService);
   router = inject(Router);
-  userCredentials : IUserCredentials[] = [
+  userCredentials: IUserCredentials[] = [
     {
       email: 'paciente11@yopmail.com',
       password: 'massimo2611',
@@ -73,16 +73,17 @@ export class LoginComponent {
       picture: 'https://firebasestorage.googleapis.com/v0/b/appspps-5d63c.appspot.com/o/files%2Fmedico%201.jpg?alt=media&token=5b0f3d60-0979-43c6-b3cf-69515f6f522a',
       role: 'admin',
     },
-    
   ];
+
   userData = {
     email: "",
     password: "",
-  }
+  };
+
   loaderState = {
     loading: false,
     state: "loading"
-  }
+  };
 
   onLogin() {
     this.loaderState.loading = true;
@@ -90,17 +91,16 @@ export class LoginComponent {
     this.authService.singIn(this.userData.email, this.userData.password).subscribe(
       {
         next: () => {
-          this.loaderState.state = "check"
+          this.loaderState.state = "check";
           this.router.navigateByUrl('/home');
         },
         error: (err) => {
-          switch(err.code)
-          {
+          switch (err.code) {
             case "auth/invalid-email":
               this.errorMessage = 'El formato de correo es invalido';
               break;
             case "auth/operation-not-allowed":
-              this.errorMessage = "Operación no permitida"
+              this.errorMessage = "Operación no permitida";
               break;
             case "auth/emailNotVerified":
               this.errorMessage = "Email no verificado";
@@ -109,21 +109,25 @@ export class LoginComponent {
               this.errorMessage = "Especialista no habilitado";
               break;
             default:
-              this.errorMessage = 'El email o contraseña no son correctos'
+              this.errorMessage = 'El email o contraseña no son correctos';
           }
           this.loaderState.state = "error";
           setTimeout(() => {
             this.loaderState.state = "loading";
             this.loaderState.loading = false;
-          },
-            1500);
-        }
-
+          }, 1500);
+        },
       }
-    );    
+    );
   }
-  
-  onLoadCredentials(userCredential : IUserCredentials) {
+
+  quickLogin(email: string, password: string) {
+    this.userData.email = email;
+    this.userData.password = password;
+    this.onLogin(); // Trigger the login process
+  }
+
+  onLoadCredentials(userCredential: IUserCredentials) {
     this.userData.email = userCredential.email;
     this.userData.password = userCredential.password;
   }
@@ -134,8 +138,8 @@ export class LoginComponent {
 }
 
 interface IUserCredentials {
-  email: string,
-  password: string,
-  role: string,
-  picture: string,
+  email: string;
+  password: string;
+  role: string;
+  picture: string;
 }
