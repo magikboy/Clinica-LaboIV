@@ -1,0 +1,87 @@
+<div class="container">
+  <div class="px-5 py-5 card flex flex-wrap gap-3">
+    <div class="w-full">
+      <p-toolbar>
+        <div class="w-7">
+          <p-inputGroup>
+            <input
+              [(ngModel)]="query"
+              type="text"
+              pInputText
+              [placeholder]="'Buscando por ' + filterBy"
+            />
+            <button disabled type="button" pButton icon="pi pi-search"></button>
+          </p-inputGroup>
+        </div>
+        <div class="w-2">
+          <p-button
+            (onClick)="changeFilter('especialidad')"
+            label="Especialidad"
+            [text]="true"
+            [raised]="true"
+            severity="warning"
+          />
+        </div>
+        <div class="w-2">
+          <p-button
+            (onClick)="changeFilter('especialista')"
+            label="Especialista"
+            [text]="true"
+            [raised]="true"
+            severity="info"
+          />
+        </div>
+      </p-toolbar>
+    </div>
+    @for (turno of getFilteredTurnos(); track $index) {
+    <p-card
+      [header]="turno.especialista.nombre"
+      [subheader]="turno.estado"
+      [style]="{ width: '360px' }"
+    >
+      <ng-template pTemplate="header">
+        <img [src]="turno.especialista.imagenPerfil" alt="imagen perfil" />
+      </ng-template>
+      <p></p>
+      <p>{{ turno.especialidad }}</p>
+      <p>{{ turno.fecha | dateDisplay }}</p>
+      <ng-template pTemplate="footer">
+        <div class="flex gap-2 mt-1">
+          @if(puedeCancelar(turno)) {
+          <p-button
+            (onClick)="cancelar(turno)"
+            label="Cancelar"
+            severity="secondary"
+            class="w-full"
+            styleClass="w-full"
+          />
+          }
+        </div>
+      </ng-template>
+    </p-card>
+    }
+  </div>
+
+  <p-dialog
+    [header]="'Comentario para ' + motivoComentario"
+    [modal]="true"
+    [(visible)]="visibleComentario"
+    [style]="{ width: '50rem' }"
+    [breakpoints]="{ '1199px': '75vw', '575px': '90vw' }"
+  >
+    <div class="flex flex-column align-items-center gap-5">
+      <input
+        placeholder="Comentario"
+        type="text"
+        pInputText
+        [(ngModel)]="nuevoComentario"
+        class="w-full"
+      />
+      <p-button
+        [disabled]="puedeConfirmar()"
+        (onClick)="confirmarComentario()"
+        label="Confirmar"
+      />
+    </div>
+  </p-dialog>
+</div>

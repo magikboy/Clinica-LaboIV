@@ -31,6 +31,8 @@ export class NavBarComponent {
       this.itemsPaciente = [
         { label: 'Home', icon: 'pi pi-home', routerLink: "/home" },
         { label: 'Perfil', icon: 'pi pi-user', routerLink: "/mi-perfil" },
+        { label: 'Mis Turnos', icon: 'pi pi-list', routerLink: "/mis-turnos"  },
+        { label: 'Solicitar Turno', icon: 'pi pi-plus-circle', routerLink: "/solicitar-turno"  },
         { label: 'Salir', icon: 'pi pi-sign-out', command: () => {
           this.authService.logOut();
           this.router.navigateByUrl('/welcome')}  },
@@ -39,6 +41,7 @@ export class NavBarComponent {
       this.itemsEspecialista = [
         { label: 'Home', icon: 'pi pi-home', routerLink: "/home" },
         { label: 'Perfil', icon: 'pi pi-user', routerLink: "/mi-perfil" },
+        { label: 'Mis Turnos', icon: 'pi pi-list', routerLink: "/mis-turnos"  },
         { label: 'Salir', icon: 'pi pi-sign-out', command: () => {
           this.authService.logOut();
           this.router.navigateByUrl('/welcome')}  },
@@ -48,6 +51,8 @@ export class NavBarComponent {
         { label: 'Home', icon: 'pi pi-home', routerLink: "/home" },
         { label: 'Perfil', icon: 'pi pi-user', routerLink: "/mi-perfil" },
         { label: 'Usuarios', icon: 'pi pi-users', routerLink: "/users" },
+        { label: 'Solicitar Turno', icon: 'pi pi-plus-circle', routerLink: "/solicitar-turno" },
+        { label: 'Turnos', icon: 'pi pi-list', routerLink: "/turnos" },
         { label: 'Salir', icon: 'pi pi-sign-out', command: () => {
           this.authService.logOut();
           this.router.navigateByUrl('/welcome')}  },

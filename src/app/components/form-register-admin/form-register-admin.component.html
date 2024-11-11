@@ -152,12 +152,18 @@
       @if(imagenPerfil?.dirty && imagenPerfil?.hasError('required')) { Debe
       ingresar una Imagen de perfil }
     </div>
+    <!-- Captcha -->
+    <div class="py-5 px-5">
+      <re-captcha (resolved)="executeReCaptcha($event)"></re-captcha>
+    </div>
+
+    <!-- Botón de enviar -->
     <p-button
-      [disabled]="!form.valid"
+      [disabled]="!form.valid || !captchaResolved"
       type="submit"
       label="Registrar"
       icon="pi pi-user-plus"
       styleClass="w-10rem mx-auto"
-    />
+    ></p-button>
   </div>
 </form>

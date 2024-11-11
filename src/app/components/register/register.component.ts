@@ -1,53 +1,39 @@
 import { Component, inject } from '@angular/core';
-import { DividerModule } from 'primeng/divider';
-import { ButtonModule } from 'primeng/button';
-import { InputTextModule } from 'primeng/inputtext';
-import { FloatLabelModule } from 'primeng/floatlabel';
-import { FormsModule } from '@angular/forms';
-import { PasswordModule } from 'primeng/password';
 import { Router } from '@angular/router';
 import { FormRegisterPacienteComponent } from '../form-register-paciente/form-register-paciente.component';
-import { RadioButtonModule } from 'primeng/radiobutton';
 import { FormRegisterEspecialistaComponent } from '../form-register-especialista/form-register-especialista.component';
+import { FormRegisterAdminComponent } from '../form-register-admin/form-register-admin.component';
 import { AuthService } from '../../services/auth.service';
 import { LoaderComponent } from '../loader/loader.component';
 import { StorageService } from '../../services/storage.service';
-import { RecaptchaModule } from 'ng-recaptcha';
+import { scaleUpAnimation } from '../../animations/animations';
 import { CommonModule } from '@angular/common';
-
-
 
 @Component({
   selector: 'app-register',
   standalone: true,
   imports: [
-    FormsModule,
-    DividerModule,
-    ButtonModule,
-    RadioButtonModule,
     FormRegisterPacienteComponent,
     FormRegisterEspecialistaComponent,
-    FloatLabelModule,
-    PasswordModule,
+    FormRegisterAdminComponent,
     LoaderComponent,
-    RecaptchaModule,
     CommonModule,
   ],
   templateUrl: './register.component.html',
-  styleUrl: './register.component.css',
+  styleUrls: ['./register.component.css'],
+  animations: [scaleUpAnimation],
 })
 export class RegisterComponent {
   router = inject(Router);
   authService = inject(AuthService);
   storageService = inject(StorageService);
 
-  role = 'paciente';
+  role = '';
   loaderState = {
     loading: false,
     state: 'loading',
   };
   errorMessage = '';
-  token: string | null = null;
 
   onLoginClick() {
     this.router.navigateByUrl('login');
@@ -56,8 +42,7 @@ export class RegisterComponent {
   onRegister(data: any) {
     this.loaderState.loading = true;
     data.data.role = this.role;
-    if (this.role != 'especialista') data.data.estaHabilitado = false;
-    console.log(data);
+    if (this.role == 'especialista') data.data.estaHabilitado = false;
     this.storageService.uploadMultiple(data.files).subscribe({
       next: (urlsObject) => {
         const keys = Object.keys(urlsObject);
@@ -75,13 +60,16 @@ export class RegisterComponent {
                 this.errorMessage = 'El correo ya está en uso';
                 break;
               case 'auth/invalid-email':
-                this.errorMessage = 'Correo electronico invalido';
+                this.errorMessage = 'Correo electrónico inválido';
                 break;
               case 'auth/operation-not-allowed':
                 this.errorMessage = 'Operación no permitida';
                 break;
               case 'auth/weak-password':
-                this.errorMessage = 'Constraseña debil';
+                this.errorMessage = 'Contraseña débil';
+                break;
+              default:
+                this.errorMessage = 'Error en el registro';
             }
 
             this.loaderState.state = 'error';
@@ -103,10 +91,7 @@ export class RegisterComponent {
     });
   }
 
-  executeReCaptcha(token: string | null) {
-    this.token = token;
-    if (token) {
-      this.loaderState.loading = false; // Deja de mostrar el loader si CAPTCHA es válido
-    }
+  selectRole(role: string) {
+    this.role = role;
   }
 }

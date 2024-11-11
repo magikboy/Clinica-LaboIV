@@ -1,0 +1,224 @@
+<div class="container">
+  <div class="px-5 py-5 card flex flex-wrap gap-3">
+    <div class="w-full">
+      <p-toolbar>
+        <div class="w-7">
+          <p-inputGroup>
+            <input
+              [(ngModel)]="query"
+              type="text"
+              pInputText
+              [placeholder]="'Buscando por ' + filterBy"
+            />
+            <button disabled type="button" pButton icon="pi pi-search"></button>
+          </p-inputGroup>
+        </div>
+        <div class="w-2">
+          <p-button
+            (onClick)="changeFilter('especialidad')"
+            label="Especialidad"
+            [text]="true"
+            [raised]="true"
+            severity="warning"
+          />
+        </div>
+        @if (role == 'paciente') {
+
+        <div class="w-2">
+          <p-button
+            (onClick)="changeFilter('especialista')"
+            label="Especialista"
+            [text]="true"
+            [raised]="true"
+            severity="info"
+          />
+        </div>
+        } @else {
+        <div class="w-2">
+          <p-button
+            (onClick)="changeFilter('paciente')"
+            label="Paciente"
+            [text]="true"
+            [raised]="true"
+            severity="info"
+          />
+        </div>
+        }
+      </p-toolbar>
+    </div>
+    @for (turno of getFilteredTurnos(); track $index) {
+    <p-card
+      [header]="getNombre(turno)"
+      [subheader]="turno.estado"
+      [style]="{ width: '360px' }"
+    >
+      <ng-template pTemplate="header">
+        <img [src]="getImg(turno)" alt="imagen perfil" />
+      </ng-template>
+      <p></p>
+      <p>{{ turno.especialidad }}</p>
+      <p>{{ turno.fecha | dateDisplay }}</p>
+      <ng-template pTemplate="footer">
+        <div class="flex gap-2 mt-1">
+          @if(puedeCancelar(turno)) {
+          <p-button
+            (onClick)="cancelar(turno)"
+            label="Cancelar"
+            severity="secondary"
+            class="w-full"
+            styleClass="w-full"
+          />
+          } @if(puedeVerComentario(turno)) {
+          <p-button
+            (onClick)="verReview(turno)"
+            label="Ver Reseña"
+            severity="secondary"
+            class="w-full"
+            styleClass="w-full"
+          />
+          } @if(puedeCompletarEncuesta(turno)) {
+          <p-button
+            (onClick)="mostrarEncuesta(turno)"
+            label="Encuesta"
+            class="w-full"
+            styleClass="w-full"
+          />
+          } @if(puedeCalificarAtencion(turno)) {
+          <p-button
+            (onClick)="dejarReview(turno)"
+            label="Calificar"
+            class="w-full"
+            styleClass="w-full"
+          />
+          } @if(puedeRechazar(turno)) {
+          <p-button
+            (onClick)="rechazar(turno)"
+            label="Rechazar"
+            severity="secondary"
+            class="w-full"
+            styleClass="w-full"
+          />
+          } @if(puedeAceptar(turno)) {
+          <p-button
+            (onClick)="aceptar(turno)"
+            label="Aceptar"
+            class="w-full"
+            styleClass="w-full"
+          />
+          } @if(puedeFinalizar(turno)) {
+          <p-button
+            (onClick)="finalizar(turno)"
+            label="Finalizar"
+            class="w-full"
+            styleClass="w-full"
+          />
+          }
+        </div>
+      </ng-template>
+    </p-card>
+    }
+  </div>
+
+  <p-dialog
+    [header]="'Comentario para ' + motivoComentario"
+    [modal]="true"
+    [(visible)]="visibleComentario"
+    [style]="{ width: '50rem' }"
+    [breakpoints]="{ '1199px': '75vw', '575px': '90vw' }"
+  >
+    <div class="flex flex-column align-items-center gap-5">
+      <input
+        placeholder="Comentario"
+        type="text"
+        pInputText
+        [(ngModel)]="nuevoComentario"
+        class="w-full"
+      />
+      <p-button
+        [disabled]="puedeConfirmar()"
+        (onClick)="confirmarComentario()"
+        label="Confirmar"
+      />
+    </div>
+  </p-dialog>
+
+  <p-dialog
+    header="Deja una reseña"
+    [modal]="true"
+    [(visible)]="visibleDejarReview"
+    [style]="{ width: '50rem' }"
+    [breakpoints]="{ '1199px': '75vw', '575px': '90vw' }"
+  >
+    <div class="flex flex-column align-items-center gap-5">
+      <input
+        placeholder="Reseña"
+        type="text"
+        pInputText
+        [(ngModel)]="nuevoComentario"
+        class="w-full"
+      />
+      <p-button
+        [disabled]="puedeConfirmar()"
+        (onClick)="confirmarReview()"
+        label="Confirmar"
+      />
+    </div>
+  </p-dialog>
+
+  <p-dialog
+    header="Reseña"
+    [modal]="true"
+    [(visible)]="visibleReview"
+    [style]="{ width: '50rem' }"
+    [breakpoints]="{ '1199px': '75vw', '575px': '90vw' }"
+  >
+    <div class="flex flex-column gap-5">
+      @if (turnoAModificar?.comentario) {
+      <div>
+        <h3>Comentario</h3>
+        <p>
+          {{ turnoAModificar?.comentario }}
+        </p>
+      </div>
+      } @if (turnoAModificar?.review) {
+      <div>
+        <div>
+          <h3>Reseña</h3>
+          <p>
+            {{ turnoAModificar?.review }}
+          </p>
+        </div>
+      </div>
+      }
+    </div>
+  </p-dialog>
+
+  <p-dialog
+    header="Completa esta encuesta"
+    [modal]="true"
+    [(visible)]="visibleEncuesta"
+    [style]="{ width: '50rem' }"
+    [breakpoints]="{ '1199px': '75vw', '575px': '90vw' }"
+  >
+    <div class="flex flex-column align-items-center gap-5">
+      @for (pregunta of encuesta; track $index) {
+      <div class="w-full">
+        <h4 class="py-2">{{ pregunta.pregunta }}</h4>
+        <input
+          placeholder="Respuesta"
+          type="text"
+          pInputText
+          [(ngModel)]="pregunta.respuesta"
+          class="w-full"
+        />
+      </div>
+
+      }
+      <p-button
+        [disabled]="puedeEnviarEncuesta()"
+        (onClick)="enviarEncuesta()"
+        label="Confirmar"
+      />
+    </div>
+  </p-dialog>
+</div>

@@ -1,51 +1,85 @@
-<div class="h-screen w-full flex justify-content-center align-items-center" style="background: linear-gradient(to bottom, grey, black);">
-    <div class="card shadow-5" style="width: 50%; max-width: 600px; background-color: #000; border: 2px solid rgba(255, 255, 255, 0.2); border-radius: 15px; padding: 2rem; color: white;">
-        <div class="text-center mb-4">
-            <h2 style="font-size: 2rem; color: #fff; font-weight: bold;">Registro</h2>
-            <p style="color: #bbb;">Verifica el CAPTCHA para continuar con el registro</p>
-        </div>
-
-        <!-- CAPTCHA -->
-        <div *ngIf="!token" class="flex justify-content-center py-5 px-5">
-            <re-captcha (resolved)="executeReCaptcha($event)"></re-captcha>
-        </div>
+<div class="welcome-container">
+  <div class="overlay">
+    <div class="card card-gradient" @scaleUp>
+      <div class="card-content">
+        <!-- Título del registro -->
+        <h2 class="register-title">Registro</h2>
 
         <!-- Loader -->
-        <div *ngIf="loaderState.loading" class="flex justify-content-center align-items-center w-full py-5 px-5">
-            <app-loader [state]="loaderState.state"></app-loader>
+        <div
+          *ngIf="loaderState.loading"
+          class="flex justify-content-center align-content-center py-5 px-5"
+        >
+          <app-loader [state]="loaderState.state"></app-loader>
         </div>
 
-        <!-- Form Content -->
-        <div *ngIf="token && !loaderState.loading" class="w-full flex flex-column align-items-center gap-4 py-3">
-            <!-- Error Message -->
-            <div *ngIf="errorMessage" class="p-message p-message-error w-full text-center" style="color: #ff4c4c;">
-                {{errorMessage}}
+        <!-- Contenido del registro -->
+        <div *ngIf="!loaderState.loading">
+          <div *ngIf="role">
+            <!-- Mostrar el formulario correspondiente -->
+            <div class="flex flex-column">
+              <div class="flex justify-content-center error">
+                {{ errorMessage }}
+              </div>
+              <div *ngIf="role === 'paciente'">
+                <app-form-register-paciente
+                  (onRegister)="onRegister($event)"
+                ></app-form-register-paciente>
+              </div>
+              <div *ngIf="role === 'especialista'">
+                <app-form-register-especialista
+                  (onRegister)="onRegister($event)"
+                ></app-form-register-especialista>
+              </div>
+              <div *ngIf="role === 'admin'">
+                <app-form-register-admin
+                  (onRegister)="onRegister($event)"
+                ></app-form-register-admin>
+              </div>
             </div>
-
-            <!-- Role Selection -->
-            <div class="w-full flex justify-content-center my-2 gap-4">
-                <div class="flex align-items-center">
-                    <p-radioButton name="role" value="paciente" [(ngModel)]="role" inputId="paciente" />
-                    <label for="paciente" class="ml-2" style="color: #bbb;">Paciente</label>
+          </div>
+          <div *ngIf="!role">
+            <!-- Mostrar las imágenes de paciente y especialista -->
+            <div class="w-full flex justify-content-center">
+              <h2>Selecciona tu Rol</h2>
+            </div>
+            <div class="role-buttons-container">
+              <div>
+                <img
+                  (click)="selectRole('paciente')"
+                  class="role-button"
+                  src="assets/register/paciente.jpg"
+                  alt="paciente"
+                />
+                <div
+                  class="flex w-full justify-content-center align-content-center"
+                >
+                  <p>Paciente</p>
                 </div>
-                <div class="flex align-items-center">
-                    <p-radioButton name="role" value="especialista" [(ngModel)]="role" inputId="especialista" />
-                    <label for="especialista" class="ml-2" style="color: #bbb;">Especialista</label>
+              </div>
+              <div>
+                <img
+                  (click)="selectRole('especialista')"
+                  class="role-button"
+                  src="assets/register/especialista.jpg"
+                  alt="especialista"
+                />
+                <div
+                  class="flex w-full justify-content-center align-content-center"
+                >
+                  <p>Especialista</p>
                 </div>
+              </div>
             </div>
-
-            <!-- Conditional Form Components -->
-            <div *ngIf="role === 'paciente'" class="w-full">
-                <app-form-register-paciente (onRegister)="onRegister($event)"></app-form-register-paciente>
-            </div>
-            <div *ngIf="role === 'especialista'" class="w-full">
-                <app-form-register-especialista (onRegister)="onRegister($event)"></app-form-register-especialista>
-            </div>
-
-            <!-- Register and Login Buttons -->
-            <div class="w-full flex align-items-center justify-content-center gap-3">
-                <p-button (onClick)="onLoginClick()" label="Ingresa" icon="pi pi-sign-in" styleClass="p-button-rounded p-button-secondary w-8rem" />
-            </div>
+          </div>
         </div>
+
+        <!-- Separador con texto personalizado -->
+        <div class="custom-divider">
+          ¿Ya tenés cuenta?
+          <a (click)="onLoginClick()">Ingresar</a>
+        </div>
+      </div>
     </div>
+  </div>
 </div>

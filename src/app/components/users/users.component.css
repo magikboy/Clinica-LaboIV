@@ -1,3 +1,76 @@
 * {
-    margin: 0;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body,
+html,
+.h-screen {
+  height: 100%;
+}
+
+.container {
+  position: relative;
+  background-image: url("../../../assets/fondo.png");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 50px 0;
+  overflow: hidden; /* Asegura que el overlay cubra toda la zona */
+}
+
+.container::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.4); /* Ajusta la opacidad para controlar la oscuridad */
+  z-index: 1;
+}
+
+.container.centered {
+  align-items: center;
+  padding-top: 0;
+  padding-bottom: 0;
+}
+
+.card {
+  position: relative;
+  z-index: 2; /* Coloca el contenido encima del overlay */
+  width: 100%;
+  max-width: 910px;
+  background: linear-gradient(to bottom right, #4e4e4e, #a5a5a5);
+  border: 2px solid rgba(0, 0, 0, 0.1);
+  border-radius: 15px;
+  padding: 2rem;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  color: #333;
+}
+
+.header,
+.sub-header {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 1rem;
+}
+
+.header p-tabMenu,
+.sub-header p-tabMenu {
+  width: 100%;
+}
+
+.form-container,
+.table-container {
+  width: 100%;
+}
+
+img {
+  border-radius: 50%;
 }

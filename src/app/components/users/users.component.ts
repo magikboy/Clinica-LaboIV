@@ -1,4 +1,7 @@
+// users.component.ts
+
 import { Component, inject } from '@angular/core';
+import { CommonModule } from '@angular/common'; // Importa CommonModule
 import { MenuItem } from 'primeng/api';
 import { TabMenuModule } from 'primeng/tabmenu';
 import { FormRegisterPacienteComponent } from '../form-register-paciente/form-register-paciente.component';
@@ -11,10 +14,12 @@ import { IAdmin, IEspecialista, IPaciente, IUser } from '../../interfaces/user.i
 import { FirestoreService } from '../../services/firestore.service';
 import { ButtonModule } from 'primeng/button';
 import { UserService } from '../../services/user.service';
+
 @Component({
   selector: 'app-users',
   standalone: true,
   imports: [
+    CommonModule, // Añade CommonModule aquí
     TabMenuModule,
     FormRegisterPacienteComponent,
     FormRegisterEspecialistaComponent,
@@ -23,7 +28,7 @@ import { UserService } from '../../services/user.service';
     ButtonModule
   ],
   templateUrl: './users.component.html',
-  styleUrl: './users.component.css'
+  styleUrls: ['./users.component.css'] // Corrige 'styleUrl' a 'styleUrls'
 })
 export class UsersComponent {
   authService = inject(AuthService);
@@ -58,7 +63,6 @@ export class UsersComponent {
         { label: 'especialista', icon: 'pi pi-heart' },
         { label: 'admin', icon: 'pi pi-key' },
     ];
-
 
     this.action = this.itemsAction[0];
     this.role = this.itemsRole[0];

@@ -1,57 +1,96 @@
+/* Estilos existentes */
 .error {
-  color: rgb(172, 0, 0);
-}
-
-.hidden {
-  display: none !important;
-}
-
-.card {
-  background-color: #000;
-  color: #fff;
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  border-radius: 15px;
-  box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.5);
-}
-
-.text-center {
-  text-align: center;
-}
-
-h2 {
-  font-size: 2rem;
-  font-weight: bold;
-  margin-bottom: 0.5rem;
-}
-
-p {
-  color: #bbb;
-  font-size: 1rem;
-  margin: 0;
-}
-
-.h-screen {
-  height: 100vh;
-  width: 100vw;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  overflow: hidden;
-}
-
-.card {
-  background-color: #000;
-  color: #fff;
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  border-radius: 15px;
-  box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.5);
-  max-width: 600px;
-  width: 50%;
-  padding: 2rem;
-}
-
-.flex-wrap {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 1rem;
-}
+    color: rgb(172, 0, 0);
+  }
+  
+  .hidden {
+    display: none !important;
+  }
+  
+  /* Botones de selección de rol */
+  .role-button {
+    border-radius: 10px; /* Bordes redondeados */
+    border: solid 2px white;
+    cursor: pointer;
+    width: 150px;
+    height: 150px;
+    object-fit: cover;
+    margin: 10px;
+  }
+  
+  /* Contenedor de los botones de rol */
+  .role-buttons-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  /* Estilos para el fondo de la página */
+  .welcome-container {
+    position: relative;
+    background-image: url('../../../assets/fondo.png');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    min-height: 100vh;
+    width: 100vw;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .welcome-container::before {
+    content: '';
+    background: rgba(0, 0, 0, 0.6); /* Oscurece el fondo para mejorar la legibilidad */
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 0;
+  }
+  
+  .overlay {
+    position: relative;
+    z-index: 1;
+    text-align: center;
+    color: white;
+  }
+  
+  /* Estilos para la tarjeta con degradado */
+  .card-gradient {
+    background: linear-gradient(to bottom right, #4e4e4e, #a5a5a5);
+    border: 1px solid grey;
+    border-radius: 10px;
+    padding: 20px;
+    width: 400px;
+  }
+  
+  /* Ajustes adicionales */
+  .card-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  /* Estilo para el título */
+  .register-title {
+    font-size: 2em;
+    margin-bottom: 20px;
+    color: #fff;
+  }
+  
+  /* Estilos para el divisor personalizado */
+  .custom-divider {
+    margin: 20px 0;
+    color: #fff;
+    font-size: 1em;
+  }
+  
+  .custom-divider a {
+    color: #fff;
+    text-decoration: underline;
+    cursor: pointer;
+  }
+  
