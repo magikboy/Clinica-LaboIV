@@ -2,6 +2,7 @@ import { Routes } from '@angular/router';
 import { isLoggedInGuard } from './guards/is-logged-in.guard';
 import { isNotLoggedInGuard } from './guards/is-not-logged-in.guard';
 import { isAdminGuard } from './guards/is-admin.guard';
+import { isEspecialistaGuard } from './guards/is-especialista.guard';
 
 export const routes: Routes = [
     { path: '', redirectTo: 'home', pathMatch: "full" },
@@ -24,6 +25,7 @@ export const routes: Routes = [
             x => x.MisTurnosComponent
         ),
         canActivate: [isLoggedInGuard],
+        
     },
 
     {
@@ -73,5 +75,12 @@ export const routes: Routes = [
             x => x.UsersComponent
         ),
         canActivate: [isAdminGuard],
+    },
+
+    {
+        path: 'pacientes', loadComponent: () => import('./components/pacientes/pacientes.component').then(
+            x => x.PacientesComponent
+        ),
+        canActivate: [isEspecialistaGuard],
     },
 ];

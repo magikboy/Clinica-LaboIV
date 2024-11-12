@@ -1,0 +1,42 @@
+<p-accordion>
+    @if(turnos.length > 0) {
+        @for (turno of turnos; track $index) {
+                <p-accordionTab [header]="turno | turnoHeader">
+                    <div>
+                        <div>
+                            <h2>Datos Fijos</h2>
+                            <p>
+                                Altura: {{turno.historiaClinica?.altura}} 
+                            </p>
+                            <p>
+                                Temperatura: {{turno.historiaClinica?.temperatura}}
+                            </p>
+                            <p>
+                                Peso: {{turno.historiaClinica?.peso}}
+                            </p>
+                            <p>
+                                Presion: {{turno.historiaClinica?.presion}}
+                            </p>
+                        </div>
+                        @if (turno.historiaClinica!.datosDinamicos.length > 0)
+                        {
+                            <div>
+                                <h2>Datos Dinamicos</h2>
+                                @for (dato of turno.historiaClinica!.datosDinamicos; track $index)
+                                
+                                {
+                                    <p>
+                                        {{dato.clave}}: {{dato.valor}} 
+                                    </p>
+                                }
+                            </div>
+                        }
+                        <p-button (onClick)="generateHistoriaClinicaPdf(turno.historiaClinica!)" icon="pi pi-file-pdf" label="Exportar"></p-button>
+                    </div>
+                </p-accordionTab>
+        }
+    }
+    @else {
+        <p>Parece que no tienes historia clinica, espera a que los medicos la rellenen</p>
+    }
+</p-accordion>

@@ -1,49 +1,94 @@
 <div class="container">
-  <div class="px-5 py-5 card flex flex-wrap gap-3">
+  <div @slideIn @slideOut class="px-5 py-5 card flex flex-wrap gap-3">
     <div class="w-full">
       <p-toolbar>
-        <div class="w-7">
+        <div class="w-12 flex flex-wrap justify-content-center">
+          <div class="w-2">
+            <p-button
+              (onClick)="changeFilter('especialidad')"
+              label="Especialidad"
+              [text]="true"
+              [raised]="true"
+              severity="warning"
+            />
+          </div>
+          @if (role == 'paciente') {
+
+          <div class="w-2">
+            <p-button
+              (onClick)="changeFilter('especialista')"
+              label="Especialista"
+              [text]="true"
+              [raised]="true"
+              severity="info"
+            />
+          </div>
+          } @else {
+          <div class="w-2">
+            <p-button
+              (onClick)="changeFilter('paciente')"
+              label="Paciente"
+              [text]="true"
+              [raised]="true"
+              severity="info"
+            />
+          </div>
+          }
+          <div class="w-2">
+            <p-button
+              (onClick)="changeFilter('fecha')"
+              label="Fecha"
+              [text]="true"
+              [raised]="true"
+              severity="success"
+            />
+          </div>
+          <div class="w-2">
+            <p-button
+              (onClick)="changeFilter('estado')"
+              label="Estado"
+              [text]="true"
+              [raised]="true"
+              severity="success"
+            />
+          </div>
+          @for (filter of historiaFijaFilters; track $index) {
+          <div class="w-2">
+            <p-button
+              (onClick)="
+                changeFilterCampoInterno('historiaClinica', filter, false)
+              "
+              [label]="filter"
+              [text]="true"
+              [raised]="true"
+              severity="help"
+            />
+          </div>
+          } @for (filter of getHistoriaDinamicoFilters(); track $index) {
+          <div class="w-2">
+            <p-button
+              (onClick)="
+                changeFilterCampoInterno('historiaClinica', filter, true)
+              "
+              [label]="filter"
+              [text]="true"
+              [raised]="true"
+              severity="help"
+            />
+          </div>
+          }
+        </div>
+        <div class="w-12">
           <p-inputGroup>
             <input
               [(ngModel)]="query"
               type="text"
               pInputText
-              [placeholder]="'Buscando por ' + filterBy"
+              [placeholder]="getSearchingString()"
             />
             <button disabled type="button" pButton icon="pi pi-search"></button>
           </p-inputGroup>
         </div>
-        <div class="w-2">
-          <p-button
-            (onClick)="changeFilter('especialidad')"
-            label="Especialidad"
-            [text]="true"
-            [raised]="true"
-            severity="warning"
-          />
-        </div>
-        @if (role == 'paciente') {
-
-        <div class="w-2">
-          <p-button
-            (onClick)="changeFilter('especialista')"
-            label="Especialista"
-            [text]="true"
-            [raised]="true"
-            severity="info"
-          />
-        </div>
-        } @else {
-        <div class="w-2">
-          <p-button
-            (onClick)="changeFilter('paciente')"
-            label="Paciente"
-            [text]="true"
-            [raised]="true"
-            severity="info"
-          />
-        </div>
-        }
       </p-toolbar>
     </div>
     @for (turno of getFilteredTurnos(); track $index) {
@@ -109,6 +154,13 @@
           <p-button
             (onClick)="finalizar(turno)"
             label="Finalizar"
+            class="w-full"
+            styleClass="w-full"
+          />
+          } @if(puedeDejarHistoriaClinica(turno)) {
+          <p-button
+            (onClick)="dejarHistoriaClinica(turno)"
+            label="Dejar Historia"
             class="w-full"
             styleClass="w-full"
           />
@@ -220,5 +272,19 @@
         label="Confirmar"
       />
     </div>
+  </p-dialog>
+
+  <p-dialog
+    header="Historia Clinica"
+    [modal]="true"
+    [(visible)]="visibleHistoria"
+    [style]="{ width: '50rem' }"
+    [breakpoints]="{ '1199px': '75vw', '575px': '90vw' }"
+  >
+    @if (visibleHistoria) {
+    <app-form-historia-clinica
+      (onSubmit)="enviarHistoriaClinica($event)"
+    ></app-form-historia-clinica>
+    }
   </p-dialog>
 </div>

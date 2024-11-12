@@ -1,5 +1,5 @@
 import { ApplicationConfig, importProvidersFrom } from '@angular/core';
-import { provideRouter } from '@angular/router';
+import { provideRouter, withViewTransitions } from '@angular/router';
 
 import { routes } from './app.routes';
 import { initializeApp, provideFirebaseApp } from '@angular/fire/app';
@@ -7,12 +7,11 @@ import { getAuth, provideAuth } from '@angular/fire/auth';
 import { getFirestore, provideFirestore } from '@angular/fire/firestore';
 import { getStorage, provideStorage } from '@angular/fire/storage';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
-import {
-  RECAPTCHA_SETTINGS,
-  RECAPTCHA_V3_SITE_KEY,
-  RecaptchaSettings,
-  ReCaptchaV3Service,
-} from 'ng-recaptcha';
+import { RECAPTCHA_SETTINGS, RECAPTCHA_V3_SITE_KEY, RecaptchaSettings, ReCaptchaV3Service } from 'ng-recaptcha';
+import { DateDisplayPipe } from './pipes/date-display.pipe';
+import { provideAnimations } from '@angular/platform-browser/animations';
+import { DateTurnPipe } from './pipes/date-turn.pipe';
+
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -38,5 +37,8 @@ export const appConfig: ApplicationConfig = {
         siteKey: '6LeZK3QqAAAAALL20lIsEsCQLu56ZdTx11t8fWJ0',
       } as RecaptchaSettings,
     },
+    provideAnimations(),
+    DateDisplayPipe,
+    DateTurnPipe,
   ],
 };

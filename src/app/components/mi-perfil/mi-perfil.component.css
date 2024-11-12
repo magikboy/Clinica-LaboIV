@@ -8,7 +8,7 @@
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
-  min-height: 100vh;
+  min-height: 90vh;
   display: flex;
   justify-content: center;
   align-items: flex-start;
@@ -35,15 +35,10 @@
 .card-container {
   position: relative;
   z-index: 2; /* Asegura que el contenido esté encima del overlay oscuro */
-  background-color: #141414;
-  color: rgb(0, 0, 0);
-  border-radius: 15px;
   padding: 2rem;
   width: 100%;
   max-width: 800px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
   overflow: hidden;
-  border: 2px solid rgba(255, 255, 255, 0.4);
 }
 
 .profile-img {

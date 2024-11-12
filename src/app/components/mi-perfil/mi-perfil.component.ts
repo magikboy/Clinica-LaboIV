@@ -6,6 +6,11 @@ import { CheckboxModule } from 'primeng/checkbox';
 import { HorariosService } from '../../services/horarios.service';
 import { IHorarios } from '../../interfaces/horarios.interface';
 import { FormsModule } from '@angular/forms';
+import { DialogModule } from 'primeng/dialog';
+import { VerHistoriaClinicaComponent } from '../ver-historia-clinica/ver-historia-clinica.component';
+import { IPaciente } from '../../interfaces/user.interface';
+import { slideInAnimation } from '../../animations/animations';
+import { FormHistoriaClinicaComponent } from "../form-historia-clinica/form-historia-clinica.component";
 
 @Component({
   selector: 'app-mi-perfil',
@@ -15,9 +20,14 @@ import { FormsModule } from '@angular/forms';
     ButtonModule,
     TableModule,
     CheckboxModule,
-  ],
+    DialogModule,
+    VerHistoriaClinicaComponent,
+],
   templateUrl: './mi-perfil.component.html',
-  styleUrl: './mi-perfil.component.css'
+  styleUrl: './mi-perfil.component.css',
+  animations: [
+    slideInAnimation
+  ]
 })
 export class MiPerfilComponent {
   authService = inject(AuthService);
@@ -27,6 +37,7 @@ export class MiPerfilComponent {
   estaViendoHorarios = false;
   mapHorarios! : IMapHorarios;
   horarios! : IHorarios;
+  visibleHistoria = false;
 
   diaSemana = ["lunes",
     "martes",
@@ -69,8 +80,17 @@ export class MiPerfilComponent {
     this.estaViendoHorarios = true;
   }
 
+  verHistoriaClinica() {
+    this.visibleHistoria = true;
+  }
+
   volver() {
     this.estaViendoHorarios = false;
+  }
+
+  getUserAsPaciente() : IPaciente {
+    const paciente = this.user as IPaciente;
+    return paciente
   }
   
   async getHorarios() {
@@ -139,7 +159,6 @@ export class MiPerfilComponent {
     this.volver();
   }
 }
-
 
 
 interface IMapHorarios {

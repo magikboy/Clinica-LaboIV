@@ -1,8 +1,13 @@
-/* mis-turnos.component.css */
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
+}
+
+body,
+html,
+.h-screen {
+  height: 100%;
 }
 
 .container {
@@ -14,9 +19,10 @@
   min-height: 100vh;
   display: flex;
   justify-content: center;
-  align-items: center;
-  padding: 0;
-  overflow: hidden;
+  align-items: flex-start;
+  padding: 20px 0;
+  overflow: hidden; /* Asegura que el overlay cubra toda la zona */
+  pointer-events: none; /* Permite interactuar con los elementos debajo */
 }
 
 .container::before {
@@ -31,17 +37,28 @@
     0,
     0,
     0.4
-  ); /* Ajusta la opacidad para cambiar la oscuridad */
+  ); /* Ajusta la opacidad para controlar la oscuridad */
   z-index: 1;
+  pointer-events: none; /* Permite interactuar con los elementos debajo */
+}
+
+.container.centered {
+  align-items: center;
+  padding-top: 0;
+  padding-bottom: 0;
 }
 
 .card {
   position: relative;
-  z-index: 2;
+  z-index: 2; /* Coloca el contenido encima del overlay */
   width: 100%;
-  max-width: 800px;
-  overflow: hidden;
+  max-width: 910px;
+  background: linear-gradient(to bottom right, #4e4e4e, #a5a5a5);
+  border: 2px solid rgba(0, 0, 0, 0.1);
+  border-radius: 15px;
   padding: 2rem;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  color: #333;
 }
 
 .p-toolbar,

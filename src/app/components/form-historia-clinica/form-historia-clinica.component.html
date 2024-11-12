@@ -1,0 +1,87 @@
+<form [formGroup]="form">
+
+    <div class="flex flex-column align-items-center justify-content-center gap-4 py-5"
+        style="padding-bottom: 0 !important;">
+        <div class="flex flex-column justify-content-center align-items-center">
+            <h2>Datos Fijos</h2>
+            <div class="w-7 lg:w-5 flex flex-wrap justify-content-center align-items-center py-2">
+                <label for="altura">Altura (Cm)</label>
+                <p-inputNumber inputStyleClass="w-full text-center" formControlName="altura" [showButtons]="true"
+                    buttonLayout="horizontal" spinnerMode="horizontal" inputId="horizontal"
+                    decrementButtonClass="p-button-secondary" incrementButtonClass="p-button-secondary"
+                    incrementButtonIcon="pi pi-plus" decrementButtonIcon="pi pi-minus" [allowEmpty]="false" [min]="1"
+                    [max]="300" />
+            </div>
+
+            <div class="w-7 lg:w-5 flex flex-wrap justify-content-center align-items-center py-2">
+                <label for="peso">Peso (kg)</label>
+                <p-inputNumber inputStyleClass="w-full text-center" formControlName="peso" [showButtons]="true"
+                    buttonLayout="horizontal" spinnerMode="horizontal" inputId="horizontal"
+                    decrementButtonClass="p-button-secondary" incrementButtonClass="p-button-secondary"
+                    incrementButtonIcon="pi pi-plus" decrementButtonIcon="pi pi-minus" [allowEmpty]="false" [min]="1"
+                    [max]="500" />
+            </div>
+
+            <div class="w-7 lg:w-5 flex flex-wrap justify-content-center align-items-center py-2">
+                <label for="temperatura">Temperatura (Grados Celcius)</label>
+                <p-inputNumber inputStyleClass="w-full text-center" formControlName="temperatura" [showButtons]="true"
+                    buttonLayout="horizontal" spinnerMode="horizontal" inputId="horizontal"
+                    decrementButtonClass="p-button-secondary" incrementButtonClass="p-button-secondary"
+                    incrementButtonIcon="pi pi-plus" decrementButtonIcon="pi pi-minus" [allowEmpty]="false" [min]="30"
+                    [max]="45" />
+            </div>
+
+            <div class="w-7 lg:w-5 flex flex-wrap justify-content-center align-items-center py-2">
+                <label for="temperatura">Presion</label>
+                <p-inputNumber inputStyleClass="w-full text-center" formControlName="presion" [showButtons]="true"
+                    buttonLayout="horizontal" spinnerMode="horizontal" inputId="horizontal"
+                    decrementButtonClass="p-button-secondary" incrementButtonClass="p-button-secondary"
+                    incrementButtonIcon="pi pi-plus" decrementButtonIcon="pi pi-minus" [allowEmpty]="false" [min]="100"
+                    [max]="300" />
+            </div>
+        </div>
+    </div>
+</form>
+<div class="flex flex-column align-items-center justify-content-center gap-4 py-5"
+    style="padding-bottom: 0 !important;">
+    <div class="flex flex-column justify-content-center align-items-center">
+        <div class="py-5">
+            <h2>Datos Dinamicos</h2>
+
+            <div class="flex flex-column">
+                @for (data of dynamicData; track $index) {
+                    <div class="w-12 flex flex-wrap gap-2 py-2">
+                        <div class="w-4">
+                            <p-floatLabel>
+                                <input [(ngModel)]="data.clave" class="w-15rem" type="text" pInputText />
+                                <label for="dni">Clave</label>
+                            </p-floatLabel>
+                        </div>
+                        <div class="w-4">
+                            <p-floatLabel>
+                                <input [(ngModel)]="data.valor" class="w-15rem" type="text" pInputText />
+                                <label for="dni">Valor</label>
+                            </p-floatLabel>
+                        </div>
+                    </div>
+                }
+            </div>
+            @if (!esValidoDatosDinamicos()) {
+                <div class="error">
+                    Todos los datos dinamicos añadidos deben ser completados.
+                </div>
+            }
+            @if (dynamicData.length < 3)
+            {
+                <div class="flex align-content-center justify-content-center">
+                    <p-button (onClick)="addDatoDinamico()" label="+" severity="secondary"
+                    styleClass="w-8rem py-3" />
+                </div>
+            }
+        </div>
+
+
+        <p-button [disabled]="!form.valid || !esValidoDatosDinamicos()" (onClick)="sendForm()" label="Confirmar" icon="pi pi-user-plus"
+            styleClass="w-10rem mx-auto" />
+    </div>
+</div>

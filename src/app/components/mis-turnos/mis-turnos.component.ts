@@ -11,6 +11,11 @@ import { InputTextModule } from 'primeng/inputtext';
 import { IPregunta } from '../../interfaces/encuesta.interface';
 import { ToolbarModule } from 'primeng/toolbar';
 import { InputGroupModule } from 'primeng/inputgroup';
+import { FormHistoriaClinicaComponent } from '../form-historia-clinica/form-historia-clinica.component';
+import { IHistoriaClinica } from '../../interfaces/historia_clinica.interface';
+import { DatePipe } from '@angular/common';
+import { slideInAnimation } from '../../animations/animations';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 @Component({
   selector: 'app-mis-turnos',
@@ -24,25 +29,37 @@ import { InputGroupModule } from 'primeng/inputgroup';
     InputTextModule,
     ToolbarModule,
     InputGroupModule,
+    FormHistoriaClinicaComponent,
   ],
   templateUrl: './mis-turnos.component.html',
-  styleUrl: './mis-turnos.component.css'
+  styleUrl: './mis-turnos.component.css',
+  animations: [
+    slideInAnimation
+  ]
 })
 export class MisTurnosComponent {
   authService = inject(AuthService);
   turnoService = inject(TurnoService);
+  _dateDisplay = inject(DateDisplayPipe);
   role!: string;
   turnos: ITurno[] = []
   visibleComentario = false;
   visibleReview = false;
   visibleDejarReview = false;
   visibleEncuesta = false;
+  visibleHistoria = false;
   motivoComentario = '';
   nuevoEstado = '';
   nuevoComentario = '';
   turnoAModificar: ITurno | null = null;
   query = '';
   filterBy = 'especialidad';
+  datosDinamicos = false;
+  campoAdicional = '';
+
+  historiaFijaFilters = ['altura', 'temperatura', 'peso', 'presion'];
+
+
 
   encuesta: IPregunta[] = [
     {
@@ -81,7 +98,15 @@ export class MisTurnosComponent {
     this.filterBy = newFilter;
   }
 
+  changeFilterCampoInterno(newFilter: string, campoAdicional : string, datosDinamicos : boolean) {
+    this.filterBy = newFilter;
+    this.datosDinamicos = datosDinamicos;
+    this.campoAdicional = campoAdicional;
+  }
+
   getFilteredTurnos(): ITurno[] {
+    if(this.query.length == 0) return this.turnos;
+
     if (this.filterBy == 'paciente' || this.filterBy == 'especialista') {
       return this.turnos.filter((turno) => {
         let nombreCompleto: string = `${turno[this.filterBy].nombre} ${turno[this.filterBy].apellido}`;
@@ -89,7 +114,53 @@ export class MisTurnosComponent {
         return nombreCompleto.includes(this.query.toLowerCase())
       });
     }
+    if(this.filterBy == 'historiaClinica') {
+      return this.turnos.filter((turno) => {
+        if(!turno.historiaClinica) return false;
+
+        if(this.datosDinamicos) {
+          for(let datoDinamico of turno.historiaClinica.datosDinamicos)
+          {
+            if (datoDinamico.clave == this.campoAdicional)
+            {
+              let valor: string = `${datoDinamico.valor}`;
+              valor = valor.toLowerCase();
+              return valor.includes(this.query.toLowerCase());
+            }
+          }
+          return false;
+        }
+        else {
+          let valor: string = `${turno.historiaClinica[this.campoAdicional]}`;
+          valor = valor.toLowerCase();
+          return valor.includes(this.query.toLowerCase());
+        }
+      });
+    }
+    else if (this.filterBy == 'fecha') {
+      return this.turnos.filter((turno) => {
+        let fechaStr = this._dateDisplay.transform(turno.fecha);
+        return fechaStr.toLowerCase().includes(this.query.toLowerCase())
+      });
+    }
     return this.turnos.filter((turno) => turno[this.filterBy].toLowerCase().includes(this.query.toLowerCase()));
+  }
+
+  getHistoriaDinamicoFilters() : string[] {
+    const filters : string[] = [];
+
+    for(let turno of this.turnos) {
+      if(turno.historiaClinica)
+      {
+        for(let datoDinamico of turno.historiaClinica.datosDinamicos){
+          if(!filters.includes(datoDinamico.clave)) {
+            filters.push(datoDinamico.clave);
+          }
+        }
+      }
+    }
+
+    return filters;
   }
 
   getNombre(turno: ITurno): string {
@@ -160,6 +231,12 @@ export class MisTurnosComponent {
     return false;
   }
 
+  puedeDejarHistoriaClinica(turno: ITurno) {
+    if (this.role == 'especialista' && turno.estado == 'realizado' && !turno.historiaClinica)
+      return true;
+    return false;
+  }
+
   cancelar(turno: ITurno) {
     this.nuevoEstado = 'cancelado';
     this.motivoComentario = 'cancelar';
@@ -199,6 +276,13 @@ export class MisTurnosComponent {
     this.motivoComentario = 'finalizar';
     this.turnoAModificar = turno;
     this.visibleComentario = true;
+  }
+
+  dejarHistoriaClinica(turno: ITurno) {
+    this.nuevoEstado = 'realizado';
+    this.motivoComentario = 'finalizar';
+    this.turnoAModificar = turno;
+    this.visibleHistoria = true;
   }
 
   verReview(turno: ITurno) {
@@ -296,8 +380,37 @@ export class MisTurnosComponent {
         (err) => {
           console.log(err);
         }
-      );
+    );
     this.visibleEncuesta = false;
     this.clearEncuesta();
+  }
+
+  enviarHistoriaClinica(historiaClinica: IHistoriaClinica) {
+    this.turnoAModificar
+    this.turnoService.update(
+      this.turnoAModificar!,
+      {
+        historiaClinica: historiaClinica,
+      }
+    )
+      .then(
+        () => {
+
+        }
+      )
+      .catch(
+        (err) => {
+          console.log(err);
+        }
+    );
+    this.visibleHistoria = false;
+  }
+
+  getSearchingString() : string {
+    let str = 'Buscando por ' + this.filterBy;
+    if(this.filterBy == 'historiaClinica') {
+      str += ': ' + this.campoAdicional;
+    }
+    return str;
   }
 }

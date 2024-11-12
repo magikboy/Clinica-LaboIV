@@ -7,7 +7,7 @@ import { AuthService } from '../../services/auth.service';
 @Component({
   selector: 'app-nav-bar',
   standalone: true,
-  imports: [RouterLink, RouterLinkActive, TabMenuModule],
+  imports: [TabMenuModule],
   templateUrl: './nav-bar.component.html',
   styleUrl: './nav-bar.component.css'
 })
@@ -42,6 +42,7 @@ export class NavBarComponent {
         { label: 'Home', icon: 'pi pi-home', routerLink: "/home" },
         { label: 'Perfil', icon: 'pi pi-user', routerLink: "/mi-perfil" },
         { label: 'Mis Turnos', icon: 'pi pi-list', routerLink: "/mis-turnos"  },
+        { label: 'Pacientes', icon: 'pi pi-users', routerLink: "/pacientes" },
         { label: 'Salir', icon: 'pi pi-sign-out', command: () => {
           this.authService.logOut();
           this.router.navigateByUrl('/welcome')}  },

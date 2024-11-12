@@ -1,8 +1,9 @@
 import { Injectable, inject } from '@angular/core';
-import { Firestore, Timestamp, addDoc, collection, collectionData, doc, getDocs, query, updateDoc, where } from '@angular/fire/firestore';
+import { Firestore, Timestamp, addDoc, collection, collectionData, doc, getDocs, orderBy, query, updateDoc, where } from '@angular/fire/firestore';
 import { Observable, map } from 'rxjs';
 import { ITurno } from '../interfaces/turno.interface';
 import { UserService } from './user.service';
+import { IHistoriaClinica } from '../interfaces/historia_clinica.interface';
 
 
 @Injectable({
@@ -35,7 +36,10 @@ export class TurnoService {
 
   getTurnosRoleUid(role: string, uid: string): Observable<ITurno[]> {
     let col = collection(this.firestore, 'turnos');
-    const consulta = query(col, where(`${role}Uid`, "==", uid));
+    let consulta = query(col, where(`${role}Uid`, "==", uid));
+
+    consulta = query(consulta, orderBy('fecha', 'desc'));
+    
     const consultaEjecuto = collectionData(consulta, { idField: 'id' }) as Observable<ITurno[]>;
 
     return consultaEjecuto.pipe(
