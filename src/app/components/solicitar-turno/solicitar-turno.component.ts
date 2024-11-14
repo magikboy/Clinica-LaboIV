@@ -1,138 +1,145 @@
 import { Component, OnInit, inject } from '@angular/core';
-import { IEspecialista, IPaciente, IUser } from '../../interfaces/user.interface';
+import { CommonModule } from '@angular/common';
+import { IEspecialista, IPaciente } from '../../interfaces/user.interface';
 import { UserService } from '../../services/user.service';
-import { InputTextModule } from 'primeng/inputtext';
 import { FormsModule } from '@angular/forms';
 import { ButtonModule } from 'primeng/button';
-import { ToolbarModule } from 'primeng/toolbar';
-import { InputGroupModule } from 'primeng/inputgroup';
-import { DropdownModule } from 'primeng/dropdown';
+import { TableModule } from 'primeng/table';
 import { HorariosService } from '../../services/horarios.service';
 import { ITurno } from '../../interfaces/turno.interface';
 import { TurnoService } from '../../services/turno.service';
 import { AuthService } from '../../services/auth.service';
-import { TableModule } from 'primeng/table';
-
 
 @Component({
   selector: 'app-solicitar-turno',
   standalone: true,
   imports: [
+    CommonModule,
     FormsModule,
-    ToolbarModule,
     ButtonModule,
-    InputTextModule,
-    InputGroupModule,
-    DropdownModule,
     TableModule,
   ],
   templateUrl: './solicitar-turno.component.html',
-  styleUrl: './solicitar-turno.component.css'
+  styleUrls: ['./solicitar-turno.component.css']
 })
 export class SolicitarTurnoComponent implements OnInit {
-  userService = inject(UserService);
-  horariosService = inject(HorariosService);
-  turnoService = inject(TurnoService);
-  authService = inject(AuthService);
+  private userService = inject(UserService);
+  private horariosService = inject(HorariosService);
+  private turnoService = inject(TurnoService);
+  private authService = inject(AuthService);
+
   especialistas: IEspecialista[] = [];
+  specialities: string[] = [];
   turnos: ITurno[] = [];
   selectedEspecialista: IEspecialista | null = null;
-  selectedEspecialidad?: string;
-  fechasEspecialista: any;
-  filterBy: string = 'nombre';
-  query: string = '';
-  workingDays = ["lunes", "martes", "miercoles", "jueves", "viernes", "sabado"];
+  selectedEspecialidad: string | null = null;
+  selectedDay: Date | null = null;
+  fechasEspecialista: any = null;
   turnsPerDay: Map<string, number> = new Map<string, number>();
-  cantConsultorios = 6;
+  cantConsultorios = 1;
   selectedPaciente: IPaciente | null = null;
-  users : IPaciente[] = [];
+  users: IPaciente[] = [];
+  workingDays = ["domingo", "lunes", "martes", "miercoles", "jueves", "viernes", "sabado"];
 
-  dateOptions: any = {
+  dateOptions: Intl.DateTimeFormatOptions = {
     day: '2-digit',
     year: 'numeric',
-    month: 'long',
+    month: '2-digit',
     hour: '2-digit',
     minute: '2-digit',
-    hour12: false // Use 24-hour time format
+    hour12: true // Use 12-hour format with AM/PM
   };
 
-
   ngOnInit(): void {
-    console.log(this.getNext15Days());
-    if (this.authService.currentUserSignal()?.role == 'paciente')
+    // If the current user is a patient, automatically select them
+    if (this.authService.currentUserSignal()?.role == 'paciente') {
       this.selectedPaciente = this.authService.currentUserSignal()! as IPaciente;
-    else {
-      this.userService.getUsersByRole('paciente')
-      .then( (users) => {
-          this.users = users as IPaciente[];
-        }
-      );
+    } else {
+      // If not a patient, load all patients for selection
+      this.userService.getUsersByRole('paciente').then((users) => {
+        this.users = users as IPaciente[];
+      });
     }
 
     this.loadEspecialistas();
-    this.turnoService.getAll().subscribe(
-      (turnos) => {
-        this.turnos = turnos;
-        this.turnsPerDay.clear();
-        for (let turno of turnos) {
-          const formattedDate = turno.fecha.toLocaleString('en-US', this.dateOptions);
-          if (this.turnsPerDay.has(formattedDate)) {
-            this.turnsPerDay.set(formattedDate, this.turnsPerDay.get(formattedDate)! + 1)
-          }
-          else {
-            this.turnsPerDay.set(formattedDate, 1)
-          }
-        }
+    this.turnoService.getAll().subscribe((turnos) => {
+      this.turnos = turnos;
+      this.turnsPerDay.clear();
+      for (let turno of turnos) {
+        const formattedDate = turno.fecha.toLocaleString('en-US', this.dateOptions);
+        this.turnsPerDay.set(formattedDate, (this.turnsPerDay.get(formattedDate) || 0) + 1);
       }
-    );
+    });
   }
 
-  async loadEspecialistas() {
+  // Load all specialists and their specialities
+  async loadEspecialistas(): Promise<void> {
     this.especialistas = await this.userService.ObtenerUsuarios('role', 'especialista') as IEspecialista[];
+    this.specialities = this.getAllUniqueSpecialities();
   }
 
-  select(especialista: IEspecialista) {
-    this.selectedEspecialista = especialista;
-    this.getHorarios();
-  }
-
-  selectPaciente(paciente : IPaciente) {
+  // Patient selection method (Needed for admin/staff scenario)
+  selectPaciente(paciente: IPaciente) {
     this.selectedPaciente = paciente;
   }
 
-  changeFilter(newFilter: string) {
-    this.filterBy = newFilter;
+  // Selecting a speciality
+  selectEspecialidad(especialidad: string) {
+    this.selectedEspecialidad = especialidad;
+    // Reset the specialist selection
+    this.selectedEspecialista = null;
+    this.selectedDay = null;
   }
 
-  getFilteredEspecialistas(): IEspecialista[] {
-    if (this.query.length > 0) {
-      if (this.filterBy == 'nombre') {
-        return this.especialistas.filter(v => v.nombre.toLowerCase().includes(this.query.toLowerCase()));
-      }
-      else {
-        return this.especialistas.filter(esp => {
-          for (let especialidad of esp.especialidades) {
-            if (especialidad.toLowerCase().includes(this.query.toLowerCase()))
-              return true
-          }
-          return false;
-        });
-      }
+  // Selecting a specialist
+  selectEspecialista(especialista: IEspecialista) {
+    this.selectedEspecialista = especialista;
+    this.selectedDay = null; // reset day selection
+    this.getHorarios();
+  }
 
+  // Retrieve the schedules for the selected specialist
+  async getHorarios(): Promise<void> {
+    if (!this.selectedEspecialista) return;
+
+    const horarios = await this.horariosService.ObtenerHorarios('uid', this.selectedEspecialista.uid);
+    const fechas = this.getNext15Days();
+
+    for (let day of this.workingDays) {
+      if (fechas[day]) {
+        fechas[day].horarios = horarios[day] || [];
+      }
     }
-    return this.especialistas;
+
+    this.fechasEspecialista = fechas;
   }
 
-  getOptions() {
-    this.selectedEspecialista!.especialidades
-    return this.selectedEspecialista!.especialidades;
+  // Selecting a day for the appointment
+  selectDay(day: Date) {
+    this.selectedDay = day;
   }
 
-  changeEspecialidad(especialidad: any) {
-    this.selectedEspecialidad = especialidad.value;
+  // Gather all unique specialities from the specialists list
+  getAllUniqueSpecialities(): string[] {
+    const specialitiesSet = new Set<string>();
+    for (let esp of this.especialistas) {
+      for (let speciality of esp.especialidades) {
+        specialitiesSet.add(speciality);
+      }
+    }
+    return Array.from(specialitiesSet);
   }
 
-  getNext15Days() {
+  // Filter specialists based on the selected speciality
+  getFilteredEspecialistasByEspecialidad(): IEspecialista[] {
+    if (!this.selectedEspecialidad) return [];
+    return this.especialistas.filter((esp) => {
+      return esp.especialidades.includes(this.selectedEspecialidad!);
+    });
+  }
+
+  // Generate a list of days for the next 15 days
+  getNext15Days(): any {
     const today = new Date();
     const daysOfWeek = ["domingo", "lunes", "martes", "miercoles", "jueves", "viernes", "sabado"];
     const result: any = {
@@ -142,84 +149,93 @@ export class SolicitarTurnoComponent implements OnInit {
       jueves: { fechas: [] },
       viernes: { fechas: [] },
       sabado: { fechas: [] },
+      domingo: { fechas: [] },
     };
 
-    for (let i = 0; i <= 15; i++) {
+    for (let i = 0; i < 15; i++) {
       const currentDay = new Date(today);
       currentDay.setDate(today.getDate() + i);
       const dayIndex = currentDay.getDay();
-      const dayNameNoAccent = daysOfWeek[dayIndex];
-      // const formattedDate = `${currentDay.getDate()}/${currentDay.getMonth() + 1}`;
-
-      if (dayNameNoAccent !== "domingo") {
-        result[dayNameNoAccent].fechas.push(currentDay);
+      const dayName = daysOfWeek[dayIndex];
+      if (result[dayName]) {
+        result[dayName].fechas.push(new Date(currentDay));
       }
     }
 
     return result;
   }
 
-  async getHorarios() {
-    const horarios = await this.horariosService.ObtenerHorarios('uid', this.selectedEspecialista!.uid);
-    const fechas = this.getNext15Days();
+  // Format the date as dd/mm
+  getFormattedDate(date: Date): string {
+    const day = date.getDate().toString().padStart(2, '0');
+    const month = (date.getMonth() + 1).toString().padStart(2, '0');
+    return `${day}/${month}`;
+  }
 
-    for (let day of this.workingDays) {
-      fechas[day].horarios = horarios[day];
+  // Retrieve the available schedules (horarios) for the selected day
+  getAvailableHorarios(): string[] {
+    if (!this.selectedEspecialista || !this.selectedEspecialidad || !this.selectedDay || !this.fechasEspecialista) {
+      return [];
     }
 
-    this.fechasEspecialista = fechas;
+    const dayName = this.workingDays[this.selectedDay.getDay()];
+    return this.fechasEspecialista[dayName]?.horarios || [];
   }
 
-  getFormattedDate(date: Date) {
-    return `${date.getDate()}/${date.getMonth() + 1}`;
-  }
-
-
-  getRemainingTurn(horario: string, fecha: Date): number {
+  // Determine remaining slots for a given schedule
+  getRemainingTurn(horario: string, date: Date): number {
     const splittedHorario = horario.split(':');
     const hour = parseInt(splittedHorario[0]);
     const minutes = parseInt(splittedHorario[1]);
 
-    fecha.setHours(hour, minutes);
+    let fecha = new Date(date);
+    fecha.setHours(hour, minutes, 0, 0);
 
     const formattedDate = fecha.toLocaleString('en-US', this.dateOptions);
 
-    const amount = this.turnsPerDay.get(formattedDate);
-    if (amount)
-      return this.cantConsultorios - amount
-
-    return this.cantConsultorios;
+    const amount = this.turnsPerDay.get(formattedDate) || 0;
+    return Math.max(this.cantConsultorios - amount, 0);
   }
 
-
-  getHorario(horario: string, fecha: Date): string {
-    return `${horario} (${this.getRemainingTurn(horario, fecha)})`;
+  // Format schedule time as hh:mmam/pm
+  formatHorario(horario: string): string {
+    const [rawHour, rawMinute] = horario.split(':');
+    let hour = parseInt(rawHour, 10);
+    const minute = parseInt(rawMinute, 10);
+    const amPm = hour >= 12 ? 'pm' : 'am';
+    hour = hour % 12 || 12;
+    const hourStr = hour.toString().padStart(2, '0');
+    const minuteStr = minute.toString().padStart(2, '0');
+    return `${hourStr}:${minuteStr}${amPm}`;
   }
 
-  solicitarTurno(fecha: Date, horario: string) {
-    console.log('entro');
+  // Request an appointment (turno)
+  async solicitarTurno(horario: string) {
+    if (!this.selectedDay || !this.selectedEspecialidad || !this.selectedEspecialista || !this.selectedPaciente) {
+      return;
+    }
+
     const splittedHorario = horario.split(':');
     const hour = parseInt(splittedHorario[0]);
     const minutes = parseInt(splittedHorario[1]);
 
-    fecha.setHours(hour, minutes);
+    let fecha = new Date(this.selectedDay);
+    fecha.setHours(hour, minutes, 0, 0);
 
-    this.turnoService.addTurno({
-      pacienteUid: this.selectedPaciente!.uid,
-      especialistaUid: this.selectedEspecialista!.uid,
-      especialidad: this.selectedEspecialidad!,
-      fecha: fecha,
-      estado: 'pendiente',
-      comentario: null,
-      especialista: this.selectedEspecialista!,
-      paciente: this.selectedPaciente! as IPaciente,
-    })
-      .then((val) => {
-        console.log(val);
-      })
-      .catch((err) => {
-        console.log(err);
+    try {
+      await this.turnoService.addTurno({
+        pacienteUid: this.selectedPaciente.uid,
+        especialistaUid: this.selectedEspecialista.uid,
+        especialidad: this.selectedEspecialidad,
+        fecha: fecha,
+        estado: 'pendiente',
+        comentario: null,
+        especialista: this.selectedEspecialista,
+        paciente: this.selectedPaciente,
       });
+      console.log('Turno solicitado con éxito');
+    } catch (error) {
+      console.error('Error al solicitar turno:', error);
+    }
   }
-
 }

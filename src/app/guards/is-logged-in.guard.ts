@@ -20,15 +20,15 @@ export const isLoggedInGuard: CanActivateFn = async (route, state) => {
         if (castedUser.estaHabilitado)
           return true;
         else {
-          router.navigateByUrl('/not-enabled');
+          router.navigateByUrl('/welcome');
           return false;
         }
       }
       return true;
     }
-    router.navigateByUrl('/verify-email');
+    router.navigateByUrl('/welcome');
     return false;
   }
-
+  router.navigateByUrl('/welcome');
   return false;
 };

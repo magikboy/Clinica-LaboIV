@@ -12,7 +12,9 @@ html,
 
 .container {
   position: relative;
-  background-image: url("../../../assets/fondo.png");
+  /* Superponemos un gradiente oscuro sobre la imagen de fondo */
+  background-image: linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)),
+    url("../../../assets/fondo.png");
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
@@ -20,26 +22,7 @@ html,
   display: flex;
   justify-content: center;
   align-items: flex-start;
-  padding: 20px 0;
-  overflow: hidden; /* Asegura que el overlay cubra toda la zona */
-  pointer-events: none; /* Permite interactuar con los elementos debajo */
-}
-
-.container::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: rgba(
-    0,
-    0,
-    0,
-    0.4
-  ); /* Ajusta la opacidad para controlar la oscuridad */
-  z-index: 1;
-  pointer-events: none; /* Permite interactuar con los elementos debajo */
+  padding: 50px 0;
 }
 
 .container.centered {

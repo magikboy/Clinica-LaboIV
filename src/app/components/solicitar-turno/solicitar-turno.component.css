@@ -1,8 +1,8 @@
-/* CSS */
-
+/* General container styling */
 .container {
   position: relative;
-  background-image: url("../../../assets/fondo.png");
+  background-image: linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)),
+    url("../../../assets/fondo.png");
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
@@ -10,57 +10,158 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  padding: 0;
-  overflow: hidden; /* Para asegurarse de que el overlay cubra todo */
-}
-
-.container::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: rgba(
-    0,
-    0,
-    0,
-    0.5
-  ); /* Cambia el valor de 0.5 para ajustar la oscuridad */
-  z-index: 1;
+  padding: 50px 0;
 }
 
 .card {
   position: relative;
-  z-index: 2; /* Coloca el contenido encima del overlay */
+  z-index: 2;
   width: 100%;
-  max-width: 1800px;
+  max-width: 800px;
   margin: auto;
-}
-
-.especialista-card {
-  padding: 1rem;
-  margin: 0.5rem;
+  padding: 2rem;
   border-radius: 8px;
-  background-color: #333;
-  color: #fff;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
-.especialista-card img {
-  width: 80px;
-  height: 80px;
+/* Title styling */
+.title {
+  font-size: 1.5rem;
+  color: #fff;
+  margin-bottom: 1.5rem; /* Espacio debajo del título */
+}
+
+/* Step 1: Specialities */
+.specialities-grid {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 2rem;
+  padding: 1rem;
+}
+
+.speciality-button {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background-color: #4778ff;
+  border: none;
+  border-radius: 50%;
+  padding: 1.5rem;
+  width: 120px;
+  height: 120px;
+  cursor: pointer;
+  color: #fff;
+  text-align: center;
+}
+
+.speciality-button:hover {
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
+}
+
+.speciality-image {
+  width: 60px;
+  height: 60px;
   border-radius: 50%;
   margin-bottom: 0.5rem;
 }
 
-.especialista-card p {
-  margin: 0.2rem 0;
+.speciality-name {
   font-size: 0.9rem;
+  margin-top: 0.5rem;
+  text-align: center;
 }
 
-.especialista-card hr {
+/* Step 2: Professionals */
+.professionals-grid {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 2rem;
+  padding: 1rem;
+}
+
+.professional-button {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background-color: #4778ff;
   border: none;
-  border-top: 1px solid rgba(255, 255, 255, 0.2);
-  margin: 0.5rem 0;
+  border-radius: 50%;
+  padding: 1.5rem;
+  width: 120px;
+  height: 120px;
+  cursor: pointer;
+  color: #fff;
+  text-align: center;
+}
+
+.professional-button:hover {
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
+}
+
+.professional-image {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  margin-bottom: 0.5rem;
+}
+
+.professional-name {
+  font-size: 0.9rem;
+  margin-top: 0.5rem;
+  text-align: center;
+}
+
+/* Step 3: Days */
+.days-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(60px, 1fr));
+  gap: 1rem;
+  width: 100%;
+}
+
+.day-button {
+  background-color: #4778ff;
+  border: none;
+  border-radius: 8px;
+  padding: 0.5rem 1rem;
+  color: #fff;
+  cursor: pointer;
+}
+
+.day-button:hover {
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
+}
+
+/* Step 4: Horarios */
+.horarios-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(60px, 1fr));
+  gap: 2rem;
+  width: 100%;
+}
+
+.horario-button {
+  background-color: #4778ff;
+  border: none;
+  border-radius: 8px;
+  padding: 0.5rem;
+  color: #fff;
+  cursor: pointer;
+}
+
+.horario-button:hover {
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
+}
+
+.horario-seleccionado {
+  background-color: #cccccc;
+  cursor: not-allowed;
+  box-shadow: none;
 }
