@@ -1,0 +1,101 @@
+<div class="container">
+  <div class="w-full flex align-items-center justify-content-center">
+    <div
+      class="w-10 px-5 py-5 border-round-right-lg shadow-7"
+      style="height: 80%"
+      style="background-color: #161616"
+    >
+      <div
+        class="flex align-items-center justify-content-center my-1 primary-300"
+      ></div>
+      <div
+        class="flex w-12 py-5 flex-row align-items-center justify-content-center"
+      >
+        <p-button
+          class="px-5"
+          (onClick)="verEstadisticas()"
+          icon="pi pi-database"
+          label="Estadisticas"
+        ></p-button>
+        <p-button
+          class="px-5"
+          (onClick)="verGrafico()"
+          icon="pi pi-chart-bar"
+          severity="success"
+          label="Grafico"
+        ></p-button>
+      </div>
+
+      <div
+        class="flex w-12 py-1 flex-row align-items-center justify-content-center"
+      >
+        <p-dropdown
+          [options]="options"
+          [(ngModel)]="selectedOption"
+          optionLabel="name"
+          (onChange)="changeOption()"
+          placeholder="Selecciona un dato"
+        />
+      </div>
+
+      @if( selectedOption && selectedOption.value > 3) {
+      <div
+        class="flex w-12 py-5 flex-row align-items-center justify-content-center"
+      >
+        <p-calendar
+          [(ngModel)]="rangeDates"
+          (onClose)="changeOption()"
+          selectionMode="range"
+          [readonlyInput]="true"
+        />
+      </div>
+      }
+      <div class="flex justify-content-center">
+        @if(selectedView == 'grafico') { @if (selectedOption) {
+        <div class="w-6">
+          <canvas id="chart"> {{ chart }} </canvas>
+          <div class="w-12 flex justify-content-end py-2">
+            <p-button
+              class="px-3"
+              (onClick)="generatePdf()"
+              icon="pi pi-file-pdf"
+              severity="danger"
+              label="Exportar"
+            ></p-button>
+          </div>
+        </div>
+        } } @else { @if (selectedOption) {
+        <div class="w-full">
+          <p-table
+            [tableStyle]="{ overflow: 'auto' }"
+            [styleClass]="'small'"
+            [value]="getKeys()"
+            [tableStyle]="{ 'min-width': '50rem' }"
+          >
+            <ng-template pTemplate="header">
+              <tr>
+                <th>Campo</th>
+                <th>Cantidad</th>
+              </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-key>
+              <tr>
+                <td>{{ key }}</td>
+                <td appStatNumber [number]="data[key]">{{ data[key] }}</td>
+              </tr>
+            </ng-template>
+          </p-table>
+          <div class="w-12 flex justify-content-end py-2">
+            <p-button
+              (onClick)="generateExcel()"
+              icon="pi pi-file-excel"
+              severity="success"
+              label="Exportar"
+            ></p-button>
+          </div>
+        </div>
+        } }
+      </div>
+    </div>
+  </div>
+</div>

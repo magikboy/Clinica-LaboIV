@@ -18,6 +18,7 @@ import { ButtonModule } from 'primeng/button';
 import { UserService } from '../../services/user.service';
 import { DialogModule } from 'primeng/dialog';
 import { VerHistoriaClinicaComponent } from '../ver-historia-clinica/ver-historia-clinica.component';
+import { slideInRightAnimation } from '../../animations/animations';
 @Component({
   selector: 'app-users',
   standalone: true,
@@ -33,6 +34,7 @@ import { VerHistoriaClinicaComponent } from '../ver-historia-clinica/ver-histori
   ],
   templateUrl: './users.component.html',
   styleUrl: './users.component.css',
+  animations: [slideInRightAnimation],
 })
 export class UsersComponent {
   authService = inject(AuthService);

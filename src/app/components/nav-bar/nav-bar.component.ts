@@ -53,6 +53,7 @@ export class NavBarComponent {
         { label: 'Perfil', icon: 'pi pi-user', routerLink: "/mi-perfil" },
         { label: 'Usuarios', icon: 'pi pi-users', routerLink: "/users" },
         { label: 'Solicitar Turno', icon: 'pi pi-plus-circle', routerLink: "/solicitar-turno" },
+        { label: 'Estadisticas', icon: 'pi pi-chart-line', routerLink: "/estadisticas" },
         { label: 'Turnos', icon: 'pi pi-list', routerLink: "/turnos" },
         { label: 'Salir', icon: 'pi pi-sign-out', command: () => {
           this.authService.logOut();

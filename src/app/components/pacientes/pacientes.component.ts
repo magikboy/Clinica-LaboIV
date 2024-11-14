@@ -7,6 +7,7 @@ import { DialogModule } from 'primeng/dialog';
 import { ButtonModule } from 'primeng/button';
 import { VerHistoriaClinicaComponent } from '../ver-historia-clinica/ver-historia-clinica.component';
 import { TableModule } from 'primeng/table';
+import { fadeInAnimation } from '../../animations/animations';
 
 @Component({
   selector: 'app-pacientes',
@@ -19,7 +20,10 @@ import { TableModule } from 'primeng/table';
 
   ],
   templateUrl: './pacientes.component.html',
-  styleUrl: './pacientes.component.css'
+  styleUrl: './pacientes.component.css',
+  animations: [
+    fadeInAnimation
+  ]
 })
 export class PacientesComponent implements OnInit {
   turnoService = inject(TurnoService);
