@@ -1,16 +1,15 @@
-<div class="container" [@slideInRightAnimation] >
-  <div class="w-full flex align-items-center justify-content-center" >
+<div class="container" [@slideInRightAnimation]>
+  <div class="w-full flex align-items-center justify-content-center">
     <div
-      class="w-10 px-5 py-5 border-round-right-lg shadow-7 "
-      style="height: 80%"
-      style="background-color: #161616"
+      class="w-10 px-5 py-5 border-round-right-lg shadow-7"
+      style="height: 80%; background-color: #161616"
     >
       <div class="flex align-items-center justify-content-center">
         <p-tabMenu
           [activeItem]="action"
           [model]="itemsAction"
           (activeItemChange)="onActionChange($event)"
-        />
+        ></p-tabMenu>
       </div>
       <div
         class="flex align-items-center justify-content-center my-1 primary-300"
@@ -19,32 +18,44 @@
           [activeItem]="role"
           [model]="itemsRole"
           (activeItemChange)="onRoleChange($event)"
-        />
+        ></p-tabMenu>
       </div>
       <div class="flex justify-content-center">
-        @if(action.label == "Crear") {
-        <div class="w-5">
-          @if(role.label == 'paciente') {
+        <!-- Creation Forms -->
+        <div *ngIf="action.label == 'Crear'" class="w-5">
           <app-form-register-paciente
+            *ngIf="role.label == 'paciente'"
             (onRegister)="onRegister($event)"
           ></app-form-register-paciente>
-          } @else if (role.label == 'especialista') {
           <app-form-register-especialista
+            *ngIf="role.label == 'especialista'"
             (onRegister)="onRegister($event)"
           ></app-form-register-especialista>
-          } @else {
           <app-form-register-admin
+            *ngIf="role.label == 'admin'"
             (onRegister)="onRegister($event)"
           ></app-form-register-admin>
-          }
         </div>
-        } @else {
-        <div class="w-full">
+
+        <!-- User List -->
+        <div *ngIf="action.label != 'Crear'" class="w-full">
+          <!-- Export to Excel button for Admin -->
+          <div
+            class="flex w-12 py-3 align-items-center justify-content-center"
+            *ngIf="isAdmin"
+          >
+            <p-button
+              (onClick)="exportUsersToExcel()"
+              icon="pi pi-file-excel"
+              label="Exportar Usuarios a Excel"
+            ></p-button>
+          </div>
+
+          <!-- User Table -->
           <p-table
-            [tableStyle]="{ overflow: 'auto' }"
-            [styleClass]="'small'"
             [value]="users"
             [tableStyle]="{ 'min-width': '50rem' }"
+            responsiveLayout="scroll"
           >
             <ng-template pTemplate="header">
               <tr>
@@ -53,14 +64,12 @@
                 <th>DNI</th>
                 <th>Edad</th>
                 <th>Email</th>
-                @if(role.label == 'especialista') {
-                <th>Especialidades</th>
-                <th>Habilitar</th>
-                } @if(role.label == 'paciente') {
-                <th>Obra Social</th>
-                <th>Foto 2</th>
-                <th>Historia Clinica</th>
-                }
+                <!-- Conditional Columns -->
+                <th *ngIf="role.label == 'especialista'">Especialidades</th>
+                <th *ngIf="role.label == 'especialista'">Habilitar</th>
+                <th *ngIf="role.label == 'paciente'">Obra Social</th>
+                <th *ngIf="role.label == 'paciente'">Foto 2</th>
+                <th *ngIf="role.label == 'paciente'">Historia Clínica</th>
               </tr>
             </ng-template>
             <ng-template pTemplate="body" let-user>
@@ -72,80 +81,109 @@
                     style="aspect-ratio: 4/4; width: 40px"
                   />
                 </td>
-
                 <td>{{ user.nombre }}</td>
                 <td>{{ user.dni }}</td>
                 <td>{{ user.edad }}</td>
                 <td>{{ user.email }}</td>
-                @if(user.role == 'especialista') {
-                <td>{{ user.especialidades }}</td>
-                <td>
-                  @if (user.estaHabilitado) {
-                  <p-button
-                    styleClass="w-full"
-                    (onClick)="deshabilitar(user)"
-                    label="Deshabilitar"
-                    icon="pi pi-arrow-down"
-                    iconPos="right"
-                    severity="danger"
-                  />
-                  } @else {
-                  <p-button
-                    styleClass="w-full"
-                    (onClick)="habilitar(user)"
-                    label="Habilitar"
-                    icon="pi pi-check"
-                    iconPos="right"
-                    severity="success"
-                  />
-                  }
-                </td>
-                } @if(user.role == 'paciente') {
-                <td>{{ user.obraSocial }}</td>
-                <td>
-                  <img
-                    [src]="user.imagenPerfilAux"
-                    alt="foto-perfil-aux"
-                    style="aspect-ratio: 4/4; width: 40px"
-                  />
-                </td>
-                <td>
-                  <p-button
-                    (onClick)="verHistoriaClinica(user)"
-                    icon="pi pi-clock"
-                    label="Historia Clinica"
-                  ></p-button>
-                </td>
-                }
+                <!-- Especialista Specific Columns -->
+                <ng-container *ngIf="user.role == 'especialista'">
+                  <td>{{ user.especialidades }}</td>
+                  <td>
+                    <p-button
+                      *ngIf="user.estaHabilitado"
+                      styleClass="w-full"
+                      (onClick)="deshabilitar(user)"
+                      label="Deshabilitar"
+                      icon="pi pi-arrow-down"
+                      iconPos="right"
+                      severity="danger"
+                    ></p-button>
+                    <p-button
+                      *ngIf="!user.estaHabilitado"
+                      styleClass="w-full"
+                      (onClick)="habilitar(user)"
+                      label="Habilitar"
+                      icon="pi pi-check"
+                      iconPos="right"
+                      severity="success"
+                    ></p-button>
+                  </td>
+                </ng-container>
+                <!-- Paciente Specific Columns -->
+                <ng-container *ngIf="user.role == 'paciente'">
+                  <td>{{ user.obraSocial }}</td>
+                  <td>
+                    <img
+                      [src]="user.imagenPerfilAux"
+                      alt="foto-perfil-aux"
+                      style="aspect-ratio: 4/4; width: 40px"
+                    />
+                  </td>
+                  <td>
+                    <p-button
+                      (onClick)="verHistoriaClinica(user)"
+                      icon="pi pi-clock"
+                      label="Historia Clínica"
+                    ></p-button>
+                  </td>
+                </ng-container>
               </tr>
             </ng-template>
           </p-table>
-          @if(role.label == 'paciente') {
-          <div class="flex w-12 py-3 align-items-center justify-content-center">
+
+          <!-- Export Pacientes to CSV Button -->
+          <div
+            class="flex w-12 py-3 align-items-center justify-content-center"
+            *ngIf="role.label == 'paciente'"
+          >
             <p-button
               (onClick)="exportPacientesToCsv()"
-              icon="pi pi-clock"
-              label="Exportar CSV"
+              icon="pi pi-file"
+              label="Exportar Pacientes a CSV"
             ></p-button>
           </div>
-          }
+
+          <!-- User List with Favorite Button for Admins -->
+          <div class="user-list" *ngIf="action.label != 'Crear'">
+            <div
+              *ngFor="let user of users"
+              class="user-item"
+              (click)="onSelectUser(user)"
+            >
+              <button
+                pButton
+                type="button"
+                icon="pi pi-star"
+                [ngClass]="{
+                  'p-button-rounded p-button-text favorite-button': true,
+                  favorite: isFavorite(user)
+                }"
+                (click)="toggleFavorite(user, $event)"
+              ></button>
+              <img
+                [src]="user.imagenPerfil"
+                alt="foto-perfil"
+                class="user-image"
+              />
+              <span class="user-name">{{ user.nombre }}</span>
+            </div>
+          </div>
         </div>
-        }
       </div>
     </div>
-  </div>
 
-  <p-dialog
-    header="Historia Clinica"
-    [modal]="true"
-    [(visible)]="visibleHistoria"
-    [style]="{ width: '50rem' }"
-    [breakpoints]="{ '1199px': '75vw', '575px': '90vw' }"
-  >
-    @if (visibleHistoria) {
-    <app-ver-historia-clinica
-      [paciente]="pacienteSeleccionado"
-    ></app-ver-historia-clinica>
-    }
-  </p-dialog>
+    <!-- Historia Clínica Dialog -->
+    <p-dialog
+      header="Historia Clínica"
+      [modal]="true"
+      [(visible)]="visibleHistoria"
+      [style]="{ width: '50rem' }"
+      [breakpoints]="{ '1199px': '75vw', '575px': '90vw' }"
+    >
+      <app-ver-historia-clinica
+        *ngIf="visibleHistoria"
+        [paciente]="pacienteSeleccionado"
+      ></app-ver-historia-clinica>
+    </p-dialog>
+  </div>
 </div>

@@ -8,6 +8,8 @@ import {
   where,
 } from '@angular/fire/firestore';
 import { IEspecialista, IUser } from '../interfaces/user.interface';
+import { ITurno } from '../interfaces/turno.interface';
+import { Timestamp } from 'firebase/firestore';
 
 @Injectable({
   providedIn: 'root',
@@ -29,7 +31,7 @@ export class UserService {
 
   async ObtenerUsuario(key: string, value: any): Promise<IUser | null> {
     try {
-      let col = collection(this.firestore, 'users');
+      const col = collection(this.firestore, 'users');
       const consulta = query(col, where(key, '==', value));
       const consultaEjecuto = await getDocs(consulta);
 
@@ -43,13 +45,13 @@ export class UserService {
   }
 
   async ObtenerUsuarios(key: string, value: any): Promise<IUser[]> {
-    let users: IUser[] = [];
+    const users: IUser[] = [];
     try {
-      let col = collection(this.firestore, 'users');
+      const col = collection(this.firestore, 'users');
       const consulta = query(col, where(key, '==', value));
       const consultaEjecuto = await getDocs(consulta);
 
-      for (let user of consultaEjecuto.docs) {
+      for (const user of consultaEjecuto.docs) {
         users.push(user.data() as IUser);
       }
 
@@ -64,7 +66,7 @@ export class UserService {
     estaHabilitado: boolean
   ): Promise<boolean> {
     try {
-      let col = collection(this.firestore, 'users');
+      const col = collection(this.firestore, 'users');
       const consulta = query(col, where('uid', '==', especialista.uid));
       const consultaEjecuto = await getDocs(consulta);
 
@@ -83,17 +85,51 @@ export class UserService {
   async getUsersByRole(role: string): Promise<IUser[]> {
     try {
       const users: IUser[] = [];
-      let col = collection(this.firestore, 'users');
+      const col = collection(this.firestore, 'users');
       const consulta = query(col, where('role', '==', role));
       const consultaEjecuto = await getDocs(consulta);
 
-      for (let doc of consultaEjecuto.docs) {
-        users.push(doc.data() as any);
+      for (const doc of consultaEjecuto.docs) {
+        users.push(doc.data() as IUser);
       }
 
       return users;
     } catch (err) {
       return [];
     }
+  }
+
+  async getUserByUid(uid: string): Promise<IUser | null> {
+    return this.ObtenerUsuario('uid', uid);
+  }
+
+  async getUserAppointments(user: IUser): Promise<ITurno[]> {
+    const col = collection(this.firestore, 'turnos');
+    let q;
+
+    if (user.role === 'especialista') {
+      q = query(col, where('especialistaUid', '==', user.uid));
+    } else if (user.role === 'paciente') {
+      q = query(col, where('pacienteUid', '==', user.uid));
+    } else {
+      // Manejar otros roles si es necesario
+      return [];
+    }
+
+    const querySnapshot = await getDocs(q);
+    const appointments: ITurno[] = [];
+
+    querySnapshot.forEach((doc) => {
+      const data = doc.data() as ITurno;
+
+      // Convertir 'fecha' de Timestamp a Date si es necesario
+      if (data.fecha instanceof Timestamp) {
+        data.fecha = data.fecha.toDate();
+      }
+
+      appointments.push(data);
+    });
+
+    return appointments;
   }
 }

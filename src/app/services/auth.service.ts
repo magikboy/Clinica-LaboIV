@@ -177,6 +177,14 @@ export class AuthService {
     return false;
   }
 
+  getAuthState(): Observable<User | null> {
+    return new Observable((observer) => {
+      this.firebaseAuth.onAuthStateChanged((user) => {
+        observer.next(user);
+      });
+    });
+  }
+
   getIngresos(): Observable<Iingreso[]> {
     let col = collection(this.firestore, 'logins');
     return collectionData(col).pipe(

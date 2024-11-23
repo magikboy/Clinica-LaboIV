@@ -13,8 +13,11 @@ html,
 .container {
   position: relative;
   /* Superponemos un gradiente oscuro sobre la imagen de fondo */
-  background-image: linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)),
-    url("../../../assets/fondo.png");
+  background-image: linear-gradient(
+      rgba(0, 0, 0, 0.4),
+      rgba(0, 0, 0, 0.4)
+    ),
+    url('../../../assets/fondo.png');
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
@@ -63,4 +66,43 @@ html,
 
 img {
   border-radius: 50%;
+}
+
+/* Styles for the user list */
+.user-list {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin-top: 20px;
+}
+
+.user-item {
+  position: relative;
+  margin: 10px;
+  text-align: center;
+  cursor: pointer;
+}
+
+.user-image {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+}
+
+.user-name {
+  display: block;
+  margin-top: 5px;
+  color: #fff;
+}
+
+/* Favorite button styles */
+.favorite-button {
+  position: absolute;
+  top: -10px;
+  right: -10px;
+  color: #ffd700;
+}
+
+.favorite {
+  color: #ffd700;
 }
