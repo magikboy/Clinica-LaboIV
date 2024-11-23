@@ -13,20 +13,17 @@ import { AuthService } from '../../services/auth.service';
 @Component({
   selector: 'app-solicitar-turno',
   standalone: true,
-  imports: [
-    CommonModule,
-    FormsModule,
-    ButtonModule,
-    TableModule,
-  ],
+  imports: [CommonModule, FormsModule, ButtonModule, TableModule],
   templateUrl: './solicitar-turno.component.html',
-  styleUrls: ['./solicitar-turno.component.css']
+  styleUrls: ['./solicitar-turno.component.css'],
 })
 export class SolicitarTurnoComponent implements OnInit {
   private userService = inject(UserService);
   private horariosService = inject(HorariosService);
   private turnoService = inject(TurnoService);
   private authService = inject(AuthService);
+
+  horariosSeleccionados: Map<string, boolean> = new Map<string, boolean>();
 
   especialistas: IEspecialista[] = [];
   specialities: string[] = [];
@@ -39,7 +36,18 @@ export class SolicitarTurnoComponent implements OnInit {
   cantConsultorios = 1;
   selectedPaciente: IPaciente | null = null;
   users: IPaciente[] = [];
-  workingDays = ["domingo", "lunes", "martes", "miercoles", "jueves", "viernes", "sabado"];
+  workingDays = [
+    'domingo',
+    'lunes',
+    'martes',
+    'miercoles',
+    'jueves',
+    'viernes',
+    'sabado',
+  ];
+
+  successMessage: string = '';
+  errorMessage: string = '';
 
   dateOptions: Intl.DateTimeFormatOptions = {
     day: '2-digit',
@@ -47,13 +55,14 @@ export class SolicitarTurnoComponent implements OnInit {
     month: '2-digit',
     hour: '2-digit',
     minute: '2-digit',
-    hour12: true // Use 12-hour format with AM/PM
+    hour12: true, // Use 12-hour format with AM/PM
   };
 
   ngOnInit(): void {
     // If the current user is a patient, automatically select them
     if (this.authService.currentUserSignal()?.role == 'paciente') {
-      this.selectedPaciente = this.authService.currentUserSignal()! as IPaciente;
+      this.selectedPaciente =
+        this.authService.currentUserSignal()! as IPaciente;
     } else {
       // If not a patient, load all patients for selection
       this.userService.getUsersByRole('paciente').then((users) => {
@@ -66,15 +75,24 @@ export class SolicitarTurnoComponent implements OnInit {
       this.turnos = turnos;
       this.turnsPerDay.clear();
       for (let turno of turnos) {
-        const formattedDate = turno.fecha.toLocaleString('en-US', this.dateOptions);
-        this.turnsPerDay.set(formattedDate, (this.turnsPerDay.get(formattedDate) || 0) + 1);
+        const formattedDate = turno.fecha.toLocaleString(
+          'en-US',
+          this.dateOptions
+        );
+        this.turnsPerDay.set(
+          formattedDate,
+          (this.turnsPerDay.get(formattedDate) || 0) + 1
+        );
       }
     });
   }
 
   // Load all specialists and their specialities
   async loadEspecialistas(): Promise<void> {
-    this.especialistas = await this.userService.ObtenerUsuarios('role', 'especialista') as IEspecialista[];
+    this.especialistas = (await this.userService.ObtenerUsuarios(
+      'role',
+      'especialista'
+    )) as IEspecialista[];
     this.specialities = this.getAllUniqueSpecialities();
   }
 
@@ -102,7 +120,10 @@ export class SolicitarTurnoComponent implements OnInit {
   async getHorarios(): Promise<void> {
     if (!this.selectedEspecialista) return;
 
-    const horarios = await this.horariosService.ObtenerHorarios('uid', this.selectedEspecialista.uid);
+    const horarios = await this.horariosService.ObtenerHorarios(
+      'uid',
+      this.selectedEspecialista.uid
+    );
     const fechas = this.getNext15Days();
 
     for (let day of this.workingDays) {
@@ -141,7 +162,15 @@ export class SolicitarTurnoComponent implements OnInit {
   // Generate a list of days for the next 15 days
   getNext15Days(): any {
     const today = new Date();
-    const daysOfWeek = ["domingo", "lunes", "martes", "miercoles", "jueves", "viernes", "sabado"];
+    const daysOfWeek = [
+      'domingo',
+      'lunes',
+      'martes',
+      'miercoles',
+      'jueves',
+      'viernes',
+      'sabado',
+    ];
     const result: any = {
       lunes: { fechas: [] },
       martes: { fechas: [] },
@@ -174,7 +203,12 @@ export class SolicitarTurnoComponent implements OnInit {
 
   // Retrieve the available schedules (horarios) for the selected day
   getAvailableHorarios(): string[] {
-    if (!this.selectedEspecialista || !this.selectedEspecialidad || !this.selectedDay || !this.fechasEspecialista) {
+    if (
+      !this.selectedEspecialista ||
+      !this.selectedEspecialidad ||
+      !this.selectedDay ||
+      !this.fechasEspecialista
+    ) {
       return [];
     }
 
@@ -209,9 +243,12 @@ export class SolicitarTurnoComponent implements OnInit {
     return `${hourStr}:${minuteStr}${amPm}`;
   }
 
-  // Request an appointment (turno)
   async solicitarTurno(horario: string) {
-    if (!this.selectedDay || !this.selectedEspecialidad || !this.selectedEspecialista || !this.selectedPaciente) {
+    if (
+      !this.selectedDay ||
+      !this.selectedEspecialista ||
+      !this.selectedPaciente
+    ) {
       return;
     }
 
@@ -226,16 +263,33 @@ export class SolicitarTurnoComponent implements OnInit {
       await this.turnoService.addTurno({
         pacienteUid: this.selectedPaciente.uid,
         especialistaUid: this.selectedEspecialista.uid,
-        especialidad: this.selectedEspecialidad,
         fecha: fecha,
         estado: 'pendiente',
         comentario: null,
         especialista: this.selectedEspecialista,
         paciente: this.selectedPaciente,
       });
-      console.log('Turno solicitado con éxito');
+
+      // Marcar el horario como seleccionado
+      const formattedHorario = `${this.getFormattedDate(
+        this.selectedDay
+      )} ${this.formatHorario(horario)}`;
+      this.horariosSeleccionados.set(formattedHorario, true);
+
+      // Mostrar mensaje de éxito en la interfaz
+      this.successMessage = `¡Turno solicitado exitosamente para el ${this.getFormattedDate(
+        fecha
+      )} a las ${this.formatHorario(horario)}!`;
+      setTimeout(() => {
+        this.successMessage = ''; // Limpiar el mensaje después de unos segundos
+      }, 5000);
     } catch (error) {
       console.error('Error al solicitar turno:', error);
+      this.errorMessage =
+        'Hubo un error al solicitar el turno. Por favor, inténtelo nuevamente.';
+      setTimeout(() => {
+        this.errorMessage = ''; // Limpiar el mensaje después de unos segundos
+      }, 5000);
     }
   }
 }

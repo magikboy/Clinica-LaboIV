@@ -1,17 +1,25 @@
 import { Injectable, inject } from '@angular/core';
-import { Firestore, Timestamp, addDoc, collection, collectionData, doc, getDocs, orderBy, query, updateDoc, where } from '@angular/fire/firestore';
+import {
+  Firestore,
+  Timestamp,
+  addDoc,
+  collection,
+  collectionData,
+  doc,
+  getDocs,
+  orderBy,
+  query,
+  updateDoc,
+  where,
+} from '@angular/fire/firestore';
 import { Observable, map } from 'rxjs';
 import { ITurno } from '../interfaces/turno.interface';
-import { UserService } from './user.service';
-import { IHistoriaClinica } from '../interfaces/historia_clinica.interface';
-
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class TurnoService {
   firestore = inject(Firestore);
-  userService = inject(UserService);
 
   addTurno(turno: any) {
     let col = collection(this.firestore, 'turnos');
@@ -21,43 +29,35 @@ export class TurnoService {
   getAll(): Observable<ITurno[]> {
     let col = collection(this.firestore, 'turnos');
     return collectionData(col, { idField: 'id' }).pipe(
-      map(
-        (turnos) => {
-          return turnos.map((turno: any) => {
-            const fechaTimeStamp = turno.fecha as Timestamp;
-            turno.fecha = fechaTimeStamp.toDate();
-            return turno as ITurno;
-          });
-        }
-
-      )
+      map((turnos) => {
+        return turnos.map((turno: any) => {
+          const fechaTimeStamp = turno.fecha as Timestamp;
+          turno.fecha = fechaTimeStamp.toDate();
+          return turno as ITurno;
+        });
+      })
     ) as Observable<ITurno[]>;
   }
 
   getTurnosRoleUid(role: string, uid: string): Observable<ITurno[]> {
     let col = collection(this.firestore, 'turnos');
-    let consulta = query(col, where(`${role}Uid`, "==", uid));
+    let consulta = query(col, where(`${role}Uid`, '==', uid));
 
     consulta = query(consulta, orderBy('fecha', 'desc'));
-    
-    const consultaEjecuto = collectionData(consulta, { idField: 'id' }) as Observable<ITurno[]>;
 
-    return consultaEjecuto.pipe(
-      map(
-        (turnos) => {
-          return turnos.map((turno: any) => {
-            const fechaTimeStamp = turno.fecha as Timestamp;
-            turno.fecha = fechaTimeStamp.toDate();
-            return turno as ITurno;
-          });
-        }
-
-      )
+    return collectionData(consulta, { idField: 'id' }).pipe(
+      map((turnos) => {
+        return turnos.map((turno: any) => {
+          const fechaTimeStamp = turno.fecha as Timestamp;
+          turno.fecha = fechaTimeStamp.toDate();
+          return turno as ITurno;
+        });
+      })
     );
   }
 
-  update(turno: ITurno, data : any) {
-    let docPelicula = doc(this.firestore, 'turnos', turno.id!);
-    return updateDoc(docPelicula, data);
+  update(turno: ITurno, data: any) {
+    let docTurno = doc(this.firestore, 'turnos', turno.id!);
+    return updateDoc(docTurno, data);
   }
 }

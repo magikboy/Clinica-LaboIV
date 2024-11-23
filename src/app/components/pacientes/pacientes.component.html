@@ -1,53 +1,36 @@
 <div class="container" [@fadeInAnimation]>
-<div class="w-full flex align-items-center justify-content-center">
-    <div class="w-10 px-5 py-5 border-round-right-lg shadow-7
-    " style="height: 80%;">
-
-        <div class="flex justify-content-center">
-                <div class="w-full">
-                    <p-table [tableStyle]="{ 'overflow': 'auto' }" [styleClass]="'small'" [value]="pacientes" [tableStyle]="{ 'min-width': '50rem' }">
-                        <ng-template pTemplate="header">
-                            <tr>
-                                <th>Foto</th>
-                                <th>Nombre</th>
-                                <th>DNI</th>
-                                <th>Edad</th>
-                                <th>Email</th>
-                                <th>Obra Social</th>
-                                <th>Foto 2</th>
-                                <th>Historia Clinica</th>
-                            </tr>
-                        </ng-template>
-                        <ng-template pTemplate="body" let-paciente>
-                            <tr>
-                                <td><img [src]="paciente.imagenPerfil" alt="foto-perfil" style="aspect-ratio: 4/4; width: 40px;"></td>
-                                
-                                <td>{{paciente.nombre}}</td>
-                                <td>{{paciente.dni}}</td>
-                                <td>{{paciente.edad}}</td>
-                                <td>{{paciente.email}}</td>
-
-                                    <td>{{paciente.obraSocial}}</td>
-                                <td><img [src]="paciente.imagenPerfilAux" alt="foto-perfil-aux" style="aspect-ratio: 4/4; width: 40px;"></td>
-                                <td><p-button (onClick)="verHistoriaClinica(paciente)" icon="pi pi-clock" label="Historia Clinica"></p-button></td>
-                            </tr>
-                        </ng-template>
-                    </p-table>
-                </div>
-        </div>
-        
+  <div class="cards-container">
+    <div
+      class="card"
+      *ngFor="let paciente of pacientes"
+      (click)="verHistoriaClinica(paciente)"
+    >
+      <img [src]="paciente.imagenPerfil" alt="foto-perfil" class="card-image" />
+      <div class="card-content">
+        <h3>{{ paciente.nombre }}</h3>
+        <p><strong>DNI:</strong> {{ paciente.dni }}</p>
+        <p><strong>Email:</strong> {{ paciente.email }}</p>
+        <p><strong>Obra Social:</strong> {{ paciente.obraSocial }}</p>
+        <p><strong>Últimos Turnos:</strong></p>
+        <ul>
+          <li *ngFor="let turno of getUltimosTurnos(paciente)">
+            {{ turno.fecha | date : "short" }}
+          </li>
+        </ul>
+      </div>
     </div>
-</div>
+  </div>
 
-<p-dialog 
-        header="Historia Clinica" 
-        [modal]="true" 
-        [(visible)]="visibleHistoria" 
-        [style]="{ width: '50rem' }" 
-        [breakpoints]="{ '1199px': '75vw', '575px': '90vw' }" >
-        @if (visibleHistoria) {
-            <app-ver-historia-clinica [paciente]="pacienteSeleccionado"></app-ver-historia-clinica>
-        }
-</p-dialog>
-
+  <p-dialog
+    header="Historia Clínica"
+    [modal]="true"
+    [(visible)]="visibleHistoria"
+    [style]="{ width: '50rem' }"
+    [breakpoints]="{ '1199px': '75vw', '575px': '90vw' }"
+  >
+    <app-ver-historia-clinica
+      *ngIf="visibleHistoria"
+      [paciente]="pacienteSeleccionado"
+    ></app-ver-historia-clinica>
+  </p-dialog>
 </div>

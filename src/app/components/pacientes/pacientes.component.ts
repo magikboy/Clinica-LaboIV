@@ -8,6 +8,7 @@ import { ButtonModule } from 'primeng/button';
 import { VerHistoriaClinicaComponent } from '../ver-historia-clinica/ver-historia-clinica.component';
 import { TableModule } from 'primeng/table';
 import { fadeInAnimation } from '../../animations/animations';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-pacientes',
@@ -15,52 +16,54 @@ import { fadeInAnimation } from '../../animations/animations';
   imports: [
     DialogModule,
     ButtonModule,
+    CommonModule,
     VerHistoriaClinicaComponent,
     TableModule,
-
   ],
   templateUrl: './pacientes.component.html',
-  styleUrl: './pacientes.component.css',
-  animations: [
-    fadeInAnimation
-  ]
+  styleUrls: ['./pacientes.component.css'],
+  animations: [fadeInAnimation],
 })
 export class PacientesComponent implements OnInit {
   turnoService = inject(TurnoService);
   authService = inject(AuthService);
   visibleHistoria = false;
-  pacienteSeleccionado! : IPaciente;
-  pacientes : IPaciente[] = [];
+  pacienteSeleccionado!: IPaciente;
+  pacientes: IPaciente[] = [];
   user = this.authService.currentUserSignal()!;
 
   ngOnInit(): void {
-    this.turnoService.getTurnosRoleUid('especialista', this.user.uid)
-    .subscribe(
-      (turnos) => {
-        this.pacientes.slice(0, this.pacientes.length);
+    this.turnoService
+      .getTurnosRoleUid('especialista', this.user.uid)
+      .subscribe((turnos) => {
+        const pacientesAtendidos = new Map<string, ITurno[]>();
+
         for (let turno of turnos) {
-          if (!this.containsPatient(turno))
-          {
-            this.pacientes.push(turno.paciente);
+          const pacienteUid = turno.pacienteUid;
+          if (!pacientesAtendidos.has(pacienteUid)) {
+            pacientesAtendidos.set(pacienteUid, []);
           }
+          pacientesAtendidos.get(pacienteUid)!.push(turno);
         }
-      }
-    )
+
+        this.pacientes = Array.from(pacientesAtendidos.entries()).map(
+          ([_, turnos]) => ({
+            ...turnos[0].paciente,
+            turnos: turnos.sort(
+              (a, b) =>
+                new Date(b.fecha).getTime() - new Date(a.fecha).getTime()
+            ),
+          })
+        );
+      });
   }
 
-  verHistoriaClinica(paciente : IPaciente) {
+  verHistoriaClinica(paciente: IPaciente) {
     this.visibleHistoria = true;
     this.pacienteSeleccionado = paciente;
   }
 
-  containsPatient(turno : ITurno)
-  {
-    for (let paciente of this.pacientes) {
-      if (turno.pacienteUid == paciente.uid)
-        return true;
-    }
-    return false;
+  getUltimosTurnos(paciente: IPaciente): ITurno[] {
+    return paciente.turnos?.slice(0, 3) || [];
   }
-
-
 }
