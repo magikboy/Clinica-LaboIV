@@ -9,6 +9,7 @@ import { HorariosService } from '../../services/horarios.service';
 import { ITurno } from '../../interfaces/turno.interface';
 import { TurnoService } from '../../services/turno.service';
 import { AuthService } from '../../services/auth.service';
+import { SlideUpAnimation } from '../../animations/animations';
 
 @Component({
   selector: 'app-solicitar-turno',
@@ -16,6 +17,9 @@ import { AuthService } from '../../services/auth.service';
   imports: [CommonModule, FormsModule, ButtonModule, TableModule],
   templateUrl: './solicitar-turno.component.html',
   styleUrls: ['./solicitar-turno.component.css'],
+  animations: [
+    SlideUpAnimation
+  ]
 })
 export class SolicitarTurnoComponent implements OnInit {
   private userService = inject(UserService);

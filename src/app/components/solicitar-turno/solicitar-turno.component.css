@@ -1,4 +1,7 @@
 /* General container styling */
+/* Tu CSS existente */
+
+/* General container styling */
 .container {
   position: relative;
   background-image: linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)),
@@ -11,7 +14,22 @@
   justify-content: center;
   align-items: center;
   padding: 50px 0;
+
+  /* Agrega estas propiedades para la animación */
+  animation: slideDown 0.5s ease-out;
 }
+
+/* Definición de la animación */
+@keyframes slideDown {
+  from {
+    transform: translateY(100%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
+/* Resto de tus estilos existentes */
 
 .card {
   position: relative;
